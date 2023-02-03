@@ -1,11 +1,28 @@
-steps:
-  - uses: actions/checkout@v3
-  - uses: actions-rs/toolchain@v1
-    with:
-      toolchain: stable
-      override: true
-  - uses: katyo/publish-crates@v2
-    with:
-      path: ./client
-      args: '--no-verify'
-      dry-run: true
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  pull_request:
+    paths:
+      - ".github/workflows/release.yml"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - uses: katyo/publish-crates@v2
+        with:
+          path: ./client
+          args: '--no-verify'
+          dry-run: true
