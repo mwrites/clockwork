@@ -26,4 +26,3 @@ jobs:
         with:
           path: ./client
           args: '--no-verify'
-          dry-run: true
