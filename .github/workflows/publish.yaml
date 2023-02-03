@@ -1,4 +1,4 @@
-name: Release
+name: Publish Crates
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - "v*"
   pull_request:
     paths:
-      - ".github/workflows/release.yml"
+      - ".github/workflows/publish.yaml"
 
 env:
   CARGO_TERM_COLOR: always
