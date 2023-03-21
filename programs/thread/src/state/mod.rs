@@ -1,7 +1,8 @@
 //! All objects needed to describe and manage the program's state.
 
 mod thread;
-mod utils;
+mod versioned_thread;
 
+pub use clockwork_utils::thread::*;
 pub use thread::*;
-pub use utils::*;
+pub use versioned_thread::*;

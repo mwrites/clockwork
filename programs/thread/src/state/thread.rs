@@ -1,13 +1,11 @@
 use anchor_lang::{prelude::*, AnchorDeserialize, AnchorSerialize};
-use clockwork_macros::TryFromData;
-
-use crate::state::*;
+use clockwork_utils::thread::{ClockData, SerializableInstruction, Trigger};
 
 pub const SEED_THREAD: &[u8] = b"thread";
 
 /// Tracks the current state of a transaction thread on Solana.
 #[account]
-#[derive(Debug, TryFromData)]
+#[derive(Debug)]
 pub struct Thread {
     /// The owner of this thread.
     pub authority: Pubkey,
@@ -22,11 +20,11 @@ pub struct Thread {
     /// The id of the thread, given by the authority.
     pub id: Vec<u8>,
     /// The instructions to be executed.
-    pub instructions: Vec<InstructionData>,
+    pub instructions: Vec<SerializableInstruction>,
     /// The name of the thread.
     pub name: String,
     /// The next instruction to be executed.
-    pub next_instruction: Option<InstructionData>,
+    pub next_instruction: Option<SerializableInstruction>,
     /// Whether or not the thread is currently paused.
     pub paused: bool,
     /// The maximum number of execs allowed per slot.
@@ -67,7 +65,7 @@ impl ThreadAccount for Account<'_, Thread> {
     fn pubkey(&self) -> Pubkey {
         Thread::pubkey(self.authority, self.id.clone())
     }
-    
+
     fn realloc(&mut self) -> Result<()> {
         // Realloc memory for the thread account
         let data_len = 8 + self.try_to_vec()?.len();
@@ -80,7 +78,7 @@ impl ThreadAccount for Account<'_, Thread> {
 #[derive(AnchorDeserialize, AnchorSerialize, Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ExecContext {
     /// Index of the next instruction to be executed.
-    pub exec_index: usize,
+    pub exec_index: u64,
 
     /// Number of execs since the last tx reimbursement.
     pub execs_since_reimbursement: u64,
@@ -93,33 +91,6 @@ pub struct ExecContext {
 
     /// Context for the triggering condition
     pub trigger_context: TriggerContext,
-}
-
-/// The triggering conditions of a thread.
-#[derive(AnchorDeserialize, AnchorSerialize, Debug, Clone, PartialEq)]
-pub enum Trigger {
-    /// Allows a thread to be kicked off whenever the data of an account changes.
-    Account {
-        /// The address of the account to monitor.
-        address: Pubkey,
-        /// The byte offset of the account data to monitor.
-        offset: usize,
-        /// The size of the byte slice to monitor (must be less than 1kb)
-        size: usize,
-    },
-
-    /// Allows a thread to be kicked off according to a one-time or recurring schedule.
-    Cron {
-        /// The schedule in cron syntax. Value must be parsable by the `clockwork_cron` package.
-        schedule: String,
-
-        /// Boolean value indicating whether triggering moments may be skipped if they are missed (e.g. due to network downtime).
-        /// If false, any "missed" triggering moments will simply be executed as soon as the network comes back online.
-        skippable: bool,
-    },
-
-    /// Allows a thread to be kicked off as soon as it's created.
-    Immediate,
 }
 
 /// The event which allowed a particular transaction thread to be triggered.
@@ -137,15 +108,33 @@ pub enum TriggerContext {
         started_at: i64,
     },
 
-    /// The immediate trigger context.
-    Immediate,
+    /// The trigger context for threads with a "now" trigger.
+    Now,
+
+    /// The trigger context for threads with a "slot" trigger.
+    Slot {
+        /// The threshold slot the schedule was waiting for.
+        started_at: u64,
+    },
+
+    /// The trigger context for threads with an "epoch" trigger.
+    Epoch {
+        /// The threshold epoch the schedule was waiting for.
+        started_at: u64,
+    },
+
+    /// The trigger context for threads with an "timestamp" trigger.
+    Timestamp {
+        /// The threshold moment the schedule was waiting for.
+        started_at: i64,
+    },
 }
 
 /// The properties of threads which are updatable.
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct ThreadSettings {
     pub fee: Option<u64>,
-    pub instructions: Option<Vec<InstructionData>>,
+    pub instructions: Option<Vec<SerializableInstruction>>,
     pub name: Option<String>,
     pub rate_limit: Option<u64>,
     pub trigger: Option<Trigger>,

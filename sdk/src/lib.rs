@@ -4,13 +4,12 @@ pub use clockwork_thread_program::ID;
 
 pub mod state {
     pub use clockwork_thread_program::state::{
-        AccountMetaData, ClockData, ExecContext, InstructionData, Thread, ThreadAccount,
-        ThreadResponse, ThreadSettings, Trigger, TriggerContext,
+        ClockData, ExecContext, SerializableAccount, SerializableInstruction, Thread,
+        ThreadAccount, ThreadResponse, ThreadSettings, Trigger, TriggerContext,
     };
 }
 
 pub mod utils {
-    pub use clockwork_thread_program::state::anchor_sighash;
     pub use clockwork_thread_program::state::PAYER_PUBKEY;
 }
 
@@ -18,7 +17,7 @@ pub mod cpi {
     use anchor_lang::prelude::{CpiContext, Result};
 
     pub use clockwork_thread_program::cpi::accounts::{
-        ThreadCreate, ThreadDelete, ThreadPause, ThreadResume, ThreadStop, ThreadUpdate,
+        ThreadCreate, ThreadDelete, ThreadPause, ThreadReset, ThreadResume, ThreadUpdate,
         ThreadWithdraw,
     };
 
@@ -26,7 +25,7 @@ pub mod cpi {
         ctx: CpiContext<'_, '_, '_, 'info, ThreadCreate<'info>>,
         amount: u64,
         id: Vec<u8>,
-        instructions: Vec<crate::state::InstructionData>,
+        instructions: Vec<crate::state::SerializableInstruction>,
         trigger: crate::state::Trigger,
     ) -> Result<()> {
         clockwork_thread_program::cpi::thread_create(ctx, amount, id, instructions, trigger)
@@ -50,8 +49,10 @@ pub mod cpi {
         clockwork_thread_program::cpi::thread_resume(ctx)
     }
 
-    pub fn thread_stop<'info>(ctx: CpiContext<'_, '_, '_, 'info, ThreadStop<'info>>) -> Result<()> {
-        clockwork_thread_program::cpi::thread_stop(ctx)
+    pub fn thread_reset<'info>(
+        ctx: CpiContext<'_, '_, '_, 'info, ThreadReset<'info>>,
+    ) -> Result<()> {
+        clockwork_thread_program::cpi::thread_reset(ctx)
     }
 
     pub fn thread_update<'info>(

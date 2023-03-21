@@ -1,8 +1,7 @@
-use {
-    crate::state::*,
-    anchor_lang::prelude::*,
-    clockwork_utils::{anchor_sighash, AccountMetaData, InstructionData, ThreadResponse},
-};
+use anchor_lang::{prelude::*, solana_program::instruction::Instruction, InstructionData};
+use clockwork_utils::thread::ThreadResponse;
+
+use crate::state::*;
 
 #[derive(Accounts)]
 pub struct ProcessUnstakesJob<'info> {
@@ -27,19 +26,25 @@ pub fn handler(ctx: Context<ProcessUnstakesJob>) -> Result<ThreadResponse> {
 
     // Return next instruction for thread.
     Ok(ThreadResponse {
-        next_instruction: if registry.total_unstakes.gt(&0) {
-            Some(InstructionData {
-                program_id: crate::ID,
-                accounts: vec![
-                    AccountMetaData::new_readonly(config.key(), false),
-                    AccountMetaData::new_readonly(registry.key(), false),
-                    AccountMetaData::new_readonly(thread.key(), true),
-                    AccountMetaData::new_readonly(Unstake::pubkey(0), false),
-                ],
-                data: anchor_sighash("unstake_preprocess").to_vec(),
-            })
+        dynamic_instruction: if registry.total_unstakes.gt(&0) {
+            Some(
+                Instruction {
+                    program_id: crate::ID,
+                    accounts: crate::accounts::UnstakePreprocess {
+                        config: config.key(),
+                        registry: registry.key(),
+                        thread: thread.key(),
+                        unstake: Unstake::pubkey(0),
+                    }
+                    .to_account_metas(Some(true)),
+                    data: crate::instruction::UnstakePreprocess {}.data(),
+                }
+                .into(),
+            )
         } else {
             None
         },
+        close_to: None,
+        trigger: None,
     })
 }

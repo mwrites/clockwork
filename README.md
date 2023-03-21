@@ -1,10 +1,8 @@
 <div align="center">
-  <img height="240" src="https://user-images.githubusercontent.com/8634334/213889894-8a976ab8-52ff-4b8c-b411-7da067d2a57b.svg" />
-
   <h1>Clockwork</h1>
 
   <p>
-    <strong>Automation engine for the Solana blockchain</strong>
+    <strong>Automation engine for Solana programs</strong>
   </p>
 
   <p>
@@ -27,8 +25,9 @@
 
 | Program | Address| Devnet | Mainnet |
 | ------- | ------ | ------ | ------- |
-| Network | `F8dKseqmBoAkHx3c58Lmb9TgJv5qeTf3BbtZZSEzYvUa` | [v1.4.0](https://explorer.solana.com/address/F8dKseqmBoAkHx3c58Lmb9TgJv5qeTf3BbtZZSEzYvUa?cluster=devnet) | [v1.4.0](https://explorer.solana.com/address/F8dKseqmBoAkHx3c58Lmb9TgJv5qeTf3BbtZZSEzYvUa) |
-| Thread | `3XXuUFfweXBwFgFfYaejLvZE4cGZiHgKiGfMtdxNzYmv` | [v1.4.0](https://explorer.solana.com/address/3XXuUFfweXBwFgFfYaejLvZE4cGZiHgKiGfMtdxNzYmv?cluster=devnet) | [v1.4.0](https://explorer.solana.com/address/3XXuUFfweXBwFgFfYaejLvZE4cGZiHgKiGfMtdxNzYmv) |
+| Network | `F8dKseqmBoAkHx3c58Lmb9TgJv5qeTf3BbtZZSEzYvUa` | [v2.0.0](https://explorer.solana.com/address/F8dKseqmBoAkHx3c58Lmb9TgJv5qeTf3BbtZZSEzYvUa) | [v2.0.0](https://explorer.solana.com/address/F8dKseqmBoAkHx3c58Lmb9TgJv5qeTf3BbtZZSEzYvUa) |
+| Thread v2 | `CLoCKyJ6DXBJqqu2VWx9RLbgnwwR6BMHHuyasVmfMzBh` | [v2.0.0](https://explorer.solana.com/address/CLoCKyJ6DXBJqqu2VWx9RLbgnwwR6BMHHuyasVmfMzBh?cluster=devnet) | [v2.0.0](https://explorer.solana.com/address/CLoCKyJ6DXBJqqu2VWx9RLbgnwwR6BMHHuyasVmfMzBh) |
+| Thread v1 | `3XXuUFfweXBwFgFfYaejLvZE4cGZiHgKiGfMtdxNzYmv` | [v1.4.2](https://explorer.solana.com/address/3XXuUFfweXBwFgFfYaejLvZE4cGZiHgKiGfMtdxNzYmv?cluster=devnet) | [v1.4.2](https://explorer.solana.com/address/3XXuUFfweXBwFgFfYaejLvZE4cGZiHgKiGfMtdxNzYmv) |
 
 # SDKs
 | Language | Description  | Lib  | Examples |
@@ -61,6 +60,8 @@ cd clockwork
 git describe --tags `git rev-list --tags --max-count=1`
 git checkout tags/...
 ```
+> ⚠️ Make sure the version of your program or client matches the version of the engine that you are running. E.g., if you are using `clockwork-sdk = 2.0.0`, you should also `git checkout tags/v2.0.0`. We use semantic versioning, but main branch is probably not what you want.
+
 
 #### 3. Build the repo.
 ```sh
@@ -93,7 +94,7 @@ rm clockwork-geyser-plugin-release-x86_64-unknown-linux-gnu.tar.bz2
 solana-keygen new -o clockwork-worker-keypair.json
 ```
 
-#### 3. Load this keypair with a small amount of SOL (~0.01 ◎). 
+#### 3. Load this keypair with a small amount of SOL (~0.1 ◎). 
 
 #### 4. Register your worker and get a worker ID: 
 ```sh
@@ -132,3 +133,9 @@ exec solana-validator \
 ```sh
 sudo systemctl restart sol
 ```
+
+## Common Errors
+Please refer to the [FAQ](https://docs.clockwork.xyz/developers/faq).
+
+## Questions
+Come build with us and ask us questions [Discord](https://discord.gg/epHsTsnUre)!

@@ -10,11 +10,14 @@ pub mod state;
 mod instructions;
 
 use anchor_lang::prelude::*;
-use clockwork_utils::CrateInfo;
+use clockwork_utils::{
+    thread::{SerializableInstruction, Trigger},
+    CrateInfo,
+};
 use instructions::*;
 use state::*;
 
-declare_id!("3XXuUFfweXBwFgFfYaejLvZE4cGZiHgKiGfMtdxNzYmv");
+declare_id!("CLoCKyJ6DXBJqqu2VWx9RLbgnwwR6BMHHuyasVmfMzBh");
 
 /// Program for creating transaction threads on Solana.
 #[program]
@@ -36,7 +39,7 @@ pub mod thread_program {
         ctx: Context<ThreadCreate>,
         amount: u64,
         id: Vec<u8>,
-        instructions: Vec<InstructionData>,
+        instructions: Vec<SerializableInstruction>,
         trigger: Trigger,
     ) -> Result<()> {
         thread_create::handler(ctx, amount, id, instructions, trigger)
@@ -45,6 +48,22 @@ pub mod thread_program {
     /// Closes an existing thread account and returns the lamports to the owner.
     pub fn thread_delete(ctx: Context<ThreadDelete>) -> Result<()> {
         thread_delete::handler(ctx)
+    }
+
+    /// Appends a new instruction to the thread's instruction set.
+    pub fn thread_instruction_add(
+        ctx: Context<ThreadInstructionAdd>,
+        instruction: SerializableInstruction,
+    ) -> Result<()> {
+        thread_instruction_add::handler(ctx, instruction)
+    }
+
+    /// Removes an instruction to the thread's instruction set at the provied index.
+    pub fn thread_instruction_remove(
+        ctx: Context<ThreadInstructionRemove>,
+        index: u64,
+    ) -> Result<()> {
+        thread_instruction_remove::handler(ctx, index)
     }
 
     /// Kicks off a thread if its trigger condition is active.
@@ -62,9 +81,9 @@ pub mod thread_program {
         thread_resume::handler(ctx)
     }
 
-    /// Resumes a paused thread.
-    pub fn thread_stop(ctx: Context<ThreadStop>) -> Result<()> {
-        thread_stop::handler(ctx)
+    /// Resets a thread's next instruction.
+    pub fn thread_reset(ctx: Context<ThreadReset>) -> Result<()> {
+        thread_reset::handler(ctx)
     }
 
     /// Allows an owner to update the mutable properties of a thread.

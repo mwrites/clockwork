@@ -1,11 +1,8 @@
-use clockwork_utils::{anchor_sighash, AccountMetaData, InstructionData};
+use anchor_lang::{prelude::*, solana_program::instruction::Instruction, InstructionData};
+use anchor_spl::token::{transfer, Token, TokenAccount, Transfer};
+use clockwork_utils::thread::ThreadResponse;
 
-use {
-    crate::{errors::*, state::*},
-    anchor_lang::prelude::*,
-    anchor_spl::token::{transfer, Token, TokenAccount, Transfer},
-    clockwork_utils::ThreadResponse,
-};
+use crate::{errors::*, state::*};
 
 #[derive(Accounts)]
 pub struct UnstakeProcess<'info> {
@@ -131,26 +128,34 @@ pub fn handler(ctx: Context<UnstakeProcess>) -> Result<ThreadResponse> {
     }
 
     // Build next instruction for the thread.
-    let next_instruction = if unstake
+    let dynamic_instruction = if unstake
         .id
         .checked_add(1)
         .unwrap()
         .lt(&registry.total_unstakes)
     {
         let next_unstake_pubkey = Unstake::pubkey(unstake.id.checked_add(1).unwrap());
-        Some(InstructionData {
-            program_id: crate::ID,
-            accounts: vec![
-                AccountMetaData::new_readonly(config.key(), false),
-                AccountMetaData::new_readonly(registry.key(), false),
-                AccountMetaData::new_readonly(thread.key(), true),
-                AccountMetaData::new_readonly(next_unstake_pubkey, false),
-            ],
-            data: anchor_sighash("unstake_preprocess").to_vec(),
-        })
+        Some(
+            Instruction {
+                program_id: crate::ID,
+                accounts: crate::accounts::UnstakePreprocess {
+                    config: config.key(),
+                    registry: registry.key(),
+                    thread: thread.key(),
+                    unstake: next_unstake_pubkey,
+                }
+                .to_account_metas(Some(true)),
+                data: crate::instruction::UnstakePreprocess {}.data(),
+            }
+            .into(),
+        )
     } else {
         None
     };
 
-    Ok(ThreadResponse { next_instruction })
+    Ok(ThreadResponse {
+        dynamic_instruction,
+        close_to: None,
+        trigger: None,
+    })
 }

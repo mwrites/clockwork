@@ -1,8 +1,7 @@
-use {
-    crate::state::*,
-    anchor_lang::prelude::*,
-    clockwork_utils::{anchor_sighash, AccountMetaData, InstructionData, ThreadResponse},
-};
+use anchor_lang::{prelude::*, solana_program::instruction::Instruction, InstructionData};
+use clockwork_utils::thread::ThreadResponse;
+
+use crate::state::*;
 
 #[derive(Accounts)]
 pub struct DeleteSnapshotJob<'info> {
@@ -25,18 +24,21 @@ pub fn handler(ctx: Context<DeleteSnapshotJob>) -> Result<ThreadResponse> {
     let thread = &mut ctx.accounts.thread;
 
     Ok(ThreadResponse {
-        next_instruction: Some(InstructionData {
-            program_id: crate::ID,
-            accounts: vec![
-                AccountMetaData::new_readonly(config.key(), false),
-                AccountMetaData::new_readonly(registry.key(), false),
-                AccountMetaData::new(
-                    Snapshot::pubkey(registry.current_epoch.checked_sub(1).unwrap()),
-                    false,
-                ),
-                AccountMetaData::new(thread.key(), true),
-            ],
-            data: anchor_sighash("delete_snapshot_process_snapshot").to_vec(),
-        }),
+        dynamic_instruction: Some(
+            Instruction {
+                program_id: crate::ID,
+                accounts: crate::accounts::DeleteSnapshotProcessSnapshot {
+                    config: config.key(),
+                    registry: registry.key(),
+                    snapshot: Snapshot::pubkey(registry.current_epoch.checked_sub(1).unwrap()),
+                    thread: thread.key(),
+                }
+                .to_account_metas(Some(true)),
+                data: crate::instruction::DeleteSnapshotProcessSnapshot {}.data(),
+            }
+            .into(),
+        ),
+        close_to: None,
+        trigger: None,
     })
 }

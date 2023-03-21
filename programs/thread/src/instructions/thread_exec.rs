@@ -1,16 +1,15 @@
-use {
-    crate::errors::ClockworkError,
-    crate::state::*,
-    anchor_lang::{
-        prelude::*,
-        solana_program::{
-            instruction::Instruction,
-            program::{get_return_data, invoke_signed},
-        },
-        AnchorDeserialize,
+use anchor_lang::{
+    prelude::*,
+    solana_program::{
+        instruction::Instruction,
+        program::{get_return_data, invoke_signed},
     },
-    clockwork_network_program::state::{Fee, Penalty, Pool, Worker, WorkerAccount},
+    AnchorDeserialize, InstructionData,
 };
+use clockwork_network_program::state::{Fee, Pool, Worker, WorkerAccount};
+use clockwork_utils::thread::{SerializableInstruction, ThreadResponse, PAYER_PUBKEY};
+
+use crate::{errors::ClockworkError, state::*};
 
 /// The ID of the pool workers must be a member of to collect fees.
 const POOL_ID: u64 = 0;
@@ -33,19 +32,6 @@ pub struct ThreadExec<'info> {
         has_one = worker,
     )]
     pub fee: Account<'info, Fee>,
-
-    /// The worker's penalty account.
-    #[account(
-        mut,
-        seeds = [
-            clockwork_network_program::state::SEED_PENALTY,
-            worker.key().as_ref(),
-        ],
-        bump,
-        seeds::program = clockwork_network_program::ID,
-        has_one = worker,
-    )]
-    pub penalty: Account<'info, Penalty>,
 
     /// The active worker pool.
     #[account(address = Pool::pubkey(POOL_ID))]
@@ -77,15 +63,15 @@ pub struct ThreadExec<'info> {
 
 pub fn handler(ctx: Context<ThreadExec>) -> Result<()> {
     // Get accounts
+    let clock = Clock::get().unwrap();
     let fee = &mut ctx.accounts.fee;
-    let penalty = &mut ctx.accounts.penalty;
     let pool = &ctx.accounts.pool;
     let signatory = &mut ctx.accounts.signatory;
     let thread = &mut ctx.accounts.thread;
     let worker = &ctx.accounts.worker;
 
     // If the rate limit has been met, exit early.
-    if thread.exec_context.unwrap().last_exec_at == Clock::get().unwrap().slot
+    if thread.exec_context.unwrap().last_exec_at == clock.slot
         && thread.exec_context.unwrap().execs_since_slot >= thread.rate_limit
     {
         return Err(ClockworkError::RateLimitExeceeded.into());
@@ -96,31 +82,18 @@ pub fn handler(ctx: Context<ThreadExec>) -> Result<()> {
 
     // Get the instruction to execute.
     // We have already verified that it is not null during account validation.
-    let next_instruction: &Option<InstructionData> = &thread.clone().next_instruction;
-    let instruction = next_instruction.as_ref().unwrap();
+    let instruction: &mut SerializableInstruction = &mut thread.next_instruction.clone().unwrap();
 
     // Inject the signatory's pubkey for the Clockwork payer ID.
-    let normalized_accounts: &mut Vec<AccountMeta> = &mut vec![];
-    instruction.accounts.iter().for_each(|acc| {
-        let acc_pubkey = if acc.pubkey == clockwork_utils::PAYER_PUBKEY {
-            signatory.key()
-        } else {
-            acc.pubkey
-        };
-        normalized_accounts.push(AccountMeta {
-            pubkey: acc_pubkey,
-            is_signer: acc.is_signer,
-            is_writable: acc.is_writable,
-        });
-    });
+    for acc in instruction.accounts.iter_mut() {
+        if acc.pubkey.eq(&PAYER_PUBKEY) {
+            acc.pubkey = signatory.key();
+        }
+    }
 
     // Invoke the provided instruction.
     invoke_signed(
-        &Instruction {
-            program_id: instruction.program_id,
-            data: instruction.data.clone(),
-            accounts: normalized_accounts.to_vec(),
-        },
+        &Instruction::from(&*instruction),
         ctx.remaining_accounts,
         &[&[
             SEED_THREAD,
@@ -146,25 +119,65 @@ pub fn handler(ctx: Context<ThreadExec>) -> Result<()> {
     };
 
     // Grab the next instruction from the thread response.
+    let mut close_to = None;
     let mut next_instruction = None;
     if let Some(thread_response) = thread_response {
-        next_instruction = thread_response.next_instruction;
+        close_to = thread_response.close_to;
+        next_instruction = thread_response.dynamic_instruction;
+
+        // Update the trigger.
+        if let Some(trigger) = thread_response.trigger {
+            require!(
+                std::mem::discriminant(&thread.trigger) == std::mem::discriminant(&trigger),
+                ClockworkError::InvalidTriggerVariant
+            );
+            thread.trigger = trigger.clone();
+
+            // If the user updates an account trigger, the trigger context is no longer valid.
+            // Here we reset the trigger context to zero to re-prime the trigger.
+            thread.exec_context = Some(ExecContext {
+                trigger_context: match trigger {
+                    Trigger::Account {
+                        address: _,
+                        offset: _,
+                        size: _,
+                    } => TriggerContext::Account { data_hash: 0 },
+                    _ => thread.exec_context.unwrap().trigger_context,
+                },
+                ..thread.exec_context.unwrap()
+            })
+        }
     }
 
     // If there is no dynamic next instruction, get the next instruction from the instruction set.
     let mut exec_index = thread.exec_context.unwrap().exec_index;
     if next_instruction.is_none() {
-        if let Some(ix) = thread.instructions.get(exec_index + 1) {
+        if let Some(ix) = thread.instructions.get((exec_index + 1) as usize) {
             next_instruction = Some(ix.clone());
             exec_index = exec_index + 1;
         }
     }
 
     // Update the next instruction.
-    thread.next_instruction = next_instruction;
+    if let Some(close_to) = close_to {
+        thread.next_instruction = Some(
+            Instruction {
+                program_id: crate::ID,
+                accounts: crate::accounts::ThreadDelete {
+                    authority: thread.key(),
+                    close_to,
+                    thread: thread.key(),
+                }
+                .to_account_metas(Some(true)),
+                data: crate::instruction::ThreadDelete {}.data(),
+            }
+            .into(),
+        );
+    } else {
+        thread.next_instruction = next_instruction;
+    }
 
     // Update the exec context.
-    let current_slot = Clock::get().unwrap().slot;
     thread.exec_context = Some(ExecContext {
         exec_index,
         execs_since_reimbursement: thread
@@ -173,7 +186,7 @@ pub fn handler(ctx: Context<ThreadExec>) -> Result<()> {
             .execs_since_reimbursement
             .checked_add(1)
             .unwrap(),
-        execs_since_slot: if current_slot == thread.exec_context.unwrap().last_exec_at {
+        execs_since_slot: if clock.slot == thread.exec_context.unwrap().last_exec_at {
             thread
                 .exec_context
                 .unwrap()
@@ -183,7 +196,7 @@ pub fn handler(ctx: Context<ThreadExec>) -> Result<()> {
         } else {
             1
         },
-        last_exec_at: current_slot,
+        last_exec_at: clock.slot,
         ..thread.exec_context.unwrap()
     });
 
@@ -206,22 +219,14 @@ pub fn handler(ctx: Context<ThreadExec>) -> Result<()> {
             .unwrap();
     }
 
-    // Debit the fee from the thread account.
-    // If the worker is in the pool, pay fee to the worker's fee account.
-    // Otherwise, pay fee to the worker's penalty account.
-    **thread.to_account_info().try_borrow_mut_lamports()? = thread
-        .to_account_info()
-        .lamports()
-        .checked_sub(thread.fee)
-        .unwrap();
+    // If the worker is in the pool, debit from the thread account and payout to the worker's fee account.
     if pool.clone().into_inner().workers.contains(&worker.key()) {
-        **fee.to_account_info().try_borrow_mut_lamports()? = fee
+        **thread.to_account_info().try_borrow_mut_lamports()? = thread
             .to_account_info()
             .lamports()
-            .checked_add(thread.fee)
+            .checked_sub(thread.fee)
             .unwrap();
-    } else {
-        **penalty.to_account_info().try_borrow_mut_lamports()? = penalty
+        **fee.to_account_info().try_borrow_mut_lamports()? = fee
             .to_account_info()
             .lamports()
             .checked_add(thread.fee)

@@ -1,16 +1,10 @@
-use crate::errors::ClockworkError;
+use crate::{errors::ClockworkError, state::*};
 
-use {
-    crate::state::*,
-    anchor_lang::{
-        prelude::*,
-        solana_program::system_program,
-        system_program::{transfer, Transfer},
-    },
+use anchor_lang::{
+    prelude::*,
+    solana_program::system_program,
+    system_program::{transfer, Transfer},
 };
-
-/// The maximum rate limit which may be set on thread.
-const MAX_RATE_LIMIT: u64 = 32;
 
 /// Accounts required by the `thread_update` instruction.
 #[derive(Accounts)]
@@ -56,10 +50,6 @@ pub fn handler(ctx: Context<ThreadUpdate>, settings: ThreadSettings) -> Result<(
 
     // If provided, update the rate limit.
     if let Some(rate_limit) = settings.rate_limit {
-        require!(
-            rate_limit.le(&MAX_RATE_LIMIT),
-            ClockworkError::MaxRateLimitExceeded
-        );
         thread.rate_limit = rate_limit;
     }
 
@@ -67,11 +57,24 @@ pub fn handler(ctx: Context<ThreadUpdate>, settings: ThreadSettings) -> Result<(
     if let Some(trigger) = settings.trigger {
         // Require the thread is not in the middle of processing.
         require!(
-            thread.next_instruction.is_none(),
-            ClockworkError::ThreadBusy
+            std::mem::discriminant(&thread.trigger) == std::mem::discriminant(&trigger),
+            ClockworkError::InvalidTriggerVariant
         );
-        thread.trigger = trigger;
-        thread.exec_context = None;
+        thread.trigger = trigger.clone();
+
+        // If the user updates an account trigger, the trigger context is no longer valid.
+        // Here we reset the trigger context to zero to re-prime the trigger.
+        thread.exec_context = Some(ExecContext {
+            trigger_context: match trigger {
+                Trigger::Account {
+                    address: _,
+                    offset: _,
+                    size: _,
+                } => TriggerContext::Account { data_hash: 0 },
+                _ => thread.exec_context.unwrap().trigger_context,
+            },
+            ..thread.exec_context.unwrap()
+        })
     }
 
     // Reallocate mem for the thread account

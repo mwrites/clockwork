@@ -1,8 +1,7 @@
-use {
-    crate::state::*,
-    anchor_lang::prelude::*,
-    clockwork_utils::{anchor_sighash, AccountMetaData, InstructionData, ThreadResponse},
-};
+use anchor_lang::{prelude::*, solana_program::instruction::Instruction, InstructionData};
+use clockwork_utils::thread::ThreadResponse;
+
+use crate::state::*;
 
 // DONE Payout yield.
 //      Transfer lamports collected by Fee accounts to Delegation accounts based on the stake balance distributions of the current Epoch's SnapshotEntries.
@@ -47,22 +46,28 @@ pub fn handler(ctx: Context<DistributeFeesProcessSnapshot>) -> Result<ThreadResp
     let thread = &ctx.accounts.thread;
 
     Ok(ThreadResponse {
-        next_instruction: if snapshot.total_frames.gt(&0) {
-            Some(InstructionData {
-                program_id: crate::ID,
-                accounts: vec![
-                    AccountMetaData::new_readonly(config.key(), false),
-                    AccountMetaData::new(Fee::pubkey(Worker::pubkey(0)), false),
-                    AccountMetaData::new_readonly(registry.key(), false),
-                    AccountMetaData::new_readonly(snapshot.key(), false),
-                    AccountMetaData::new_readonly(SnapshotFrame::pubkey(snapshot.key(), 0), false),
-                    AccountMetaData::new_readonly(thread.key(), true),
-                    AccountMetaData::new(Worker::pubkey(0), false),
-                ],
-                data: anchor_sighash("distribute_fees_process_frame").to_vec(),
-            })
+        dynamic_instruction: if snapshot.total_frames.gt(&0) {
+            Some(
+                Instruction {
+                    program_id: crate::ID,
+                    accounts: crate::accounts::DistributeFeesProcessFrame {
+                        config: config.key(),
+                        fee: Fee::pubkey(Worker::pubkey(0)),
+                        registry: registry.key(),
+                        snapshot: snapshot.key(),
+                        snapshot_frame: SnapshotFrame::pubkey(snapshot.key(), 0),
+                        thread: thread.key(),
+                        worker: Worker::pubkey(0),
+                    }
+                    .to_account_metas(Some(true)),
+                    data: crate::instruction::DistributeFeesProcessFrame {}.data(),
+                }
+                .into(),
+            )
         } else {
             None
         },
+        close_to: None,
+        trigger: None,
     })
 }
