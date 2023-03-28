@@ -7,12 +7,12 @@ use {
         },
         InstructionData,
     },
-    clockwork_network_program::state::*,
+    mat_clockwork_network_program::state::*,
 };
 
 pub fn initialize(admin: Pubkey, mint: Pubkey) -> Instruction {
     Instruction {
-        program_id: clockwork_network_program::ID,
+        program_id: mat_clockwork_network_program::ID,
         accounts: vec![
             AccountMeta::new(admin, true),
             AccountMeta::new(Config::pubkey(), false),
@@ -21,6 +21,6 @@ pub fn initialize(admin: Pubkey, mint: Pubkey) -> Instruction {
             AccountMeta::new(Snapshot::pubkey(0), false),
             AccountMeta::new_readonly(system_program::ID, false),
         ],
-        data: clockwork_network_program::instruction::Initialize {}.data(),
+        data: mat_clockwork_network_program::instruction::Initialize {}.data(),
     }
 }

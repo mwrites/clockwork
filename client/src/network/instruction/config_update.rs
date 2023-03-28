@@ -6,16 +6,16 @@ use {
         },
         InstructionData,
     },
-    clockwork_network_program::state::*,
+    mat_clockwork_network_program::state::*,
 };
 
 pub fn config_update(admin: Pubkey, settings: ConfigSettings) -> Instruction {
     Instruction {
-        program_id: clockwork_network_program::ID,
+        program_id: mat_clockwork_network_program::ID,
         accounts: vec![
             AccountMeta::new(admin, true),
             AccountMeta::new(Config::pubkey(), false),
         ],
-        data: clockwork_network_program::instruction::ConfigUpdate { settings }.data(),
+        data: mat_clockwork_network_program::instruction::ConfigUpdate { settings }.data(),
     }
 }

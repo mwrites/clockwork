@@ -3,7 +3,8 @@ use anchor_lang::{
     solana_program::{instruction::Instruction, sysvar},
     Discriminator, InstructionData, ToAccountMetas,
 };
-use clockwork_thread_program_v2::state::{Thread, Trigger, VersionedThread, PAYER_PUBKEY};
+use clockwork_sdk::{state::Thread, utils::PAYER_PUBKEY};
+use mat_clockwork_thread_program_v2::state::{Trigger, VersionedThread};
 use js_sys::WebAssembly::RuntimeError;
 use serde::{Deserialize, Serialize};
 use solana_client_wasm::{
@@ -16,7 +17,7 @@ use solana_client_wasm::{
     utils::{
         rpc_config::{
             GetConfirmedSignaturesForAddress2Config, RpcAccountInfoConfig, RpcBlockConfig,
-            RpcProgramAccountsConfig,
+            RpcProgramAccountsConfig, RpcTransactionConfig,
         },
         rpc_filter::{Memcmp, MemcmpEncodedBytes, RpcFilterType},
         rpc_response::RpcConfirmedTransactionStatusWithSignature,
@@ -76,7 +77,7 @@ impl Client {
         let accounts = self
             .client
             .get_program_accounts_with_config(
-                &clockwork_thread_program_v2::ID,
+                &clockwork_sdk::ID,
                 RpcProgramAccountsConfig {
                     filters: Some(vec![RpcFilterType::Memcmp(Memcmp {
                         offset: 0,
@@ -247,13 +248,13 @@ fn build_kickoff_ix(
         },
         VersionedThread::V2(_) => Instruction {
             program_id: thread.program_id(),
-            accounts: clockwork_thread_program_v2::accounts::ThreadKickoff {
+            accounts: mat_clockwork_thread_program_v2::accounts::ThreadKickoff {
                 signatory: signatory_pubkey,
                 thread: thread_pubkey,
                 worker: worker_pubkey,
             }
             .to_account_metas(Some(false)),
-            data: clockwork_thread_program_v2::instruction::ThreadKickoff {}.data(),
+            data: mat_clockwork_thread_program_v2::instruction::ThreadKickoff {}.data(),
         },
     };
 
@@ -285,9 +286,9 @@ fn build_exec_ix(
         VersionedThread::V1(_) => Instruction {
             program_id: thread.program_id(),
             accounts: clockwork_thread_program_v1::accounts::ThreadExec {
-                fee: clockwork_network_program::state::Fee::pubkey(worker_pubkey),
-                penalty: clockwork_network_program::state::Penalty::pubkey(worker_pubkey),
-                pool: clockwork_network_program::state::Pool::pubkey(0),
+                fee: mat_clockwork_network_program::state::Fee::pubkey(worker_pubkey),
+                penalty: mat_clockwork_network_program::state::Penalty::pubkey(worker_pubkey),
+                pool: mat_clockwork_network_program::state::Pool::pubkey(0),
                 signatory: signatory_pubkey,
                 thread: thread_pubkey,
                 worker: worker_pubkey,
@@ -297,15 +298,15 @@ fn build_exec_ix(
         },
         VersionedThread::V2(_) => Instruction {
             program_id: thread.program_id(),
-            accounts: clockwork_thread_program_v2::accounts::ThreadExec {
-                fee: clockwork_network_program::state::Fee::pubkey(worker_pubkey),
-                pool: clockwork_network_program::state::Pool::pubkey(0),
+            accounts: mat_clockwork_thread_program_v2::accounts::ThreadExec {
+                fee: mat_clockwork_network_program::state::Fee::pubkey(worker_pubkey),
+                pool: mat_clockwork_network_program::state::Pool::pubkey(0),
                 signatory: signatory_pubkey,
                 thread: thread_pubkey,
                 worker: worker_pubkey,
             }
             .to_account_metas(Some(true)),
-            data: clockwork_thread_program_v2::instruction::ThreadExec {}.data(),
+            data: mat_clockwork_thread_program_v2::instruction::ThreadExec {}.data(),
         },
     };
 
@@ -346,10 +347,7 @@ impl Cluster {
             Self::Mainnet => {
                 "https://rpc.helius.xyz/?api-key=cafb5acc-3dc2-47a0-8505-77ea5ebc7ec6".to_string()
             }
-            Self::Devnet => {
-                "https://rpc-devnet.helius.xyz/?api-key=8f29b4e9-37a6-4775-88c6-6f971fe180ca"
-                    .to_string()
-            }
+            Self::Devnet => "https://api.devnet.solana.com".to_string(),
             // Self::Custom(rpc_url) => rpc_url.to_string(),
         }
     }

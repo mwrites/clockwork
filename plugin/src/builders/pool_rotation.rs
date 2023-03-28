@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use clockwork_client::network::state::{Pool, Registry, Snapshot, SnapshotFrame, Worker};
+use mat_clockwork_client::network::state::{Pool, Registry, Snapshot, SnapshotFrame, Worker};
 use log::info;
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::{signature::Keypair, signer::Signer, transaction::Transaction};
@@ -62,7 +62,7 @@ pub async fn build_pool_rotation_tx<'a>(
 
     // Build rotation instruction to rotate the worker into pool 0.
     let snapshot_pubkey = Snapshot::pubkey(snapshot.id);
-    let ix = clockwork_client::network::instruction::pool_rotate(
+    let ix = mat_clockwork_client::network::instruction::pool_rotate(
         Pool::pubkey(0),
         keypair.pubkey(),
         snapshot_pubkey,

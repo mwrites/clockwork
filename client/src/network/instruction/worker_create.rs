@@ -8,7 +8,7 @@ use {
         InstructionData,
     },
     anchor_spl::{associated_token, associated_token::get_associated_token_address, token},
-    clockwork_network_program::state::*,
+    mat_clockwork_network_program::state::*,
 };
 
 pub fn worker_create(
@@ -18,7 +18,7 @@ pub fn worker_create(
     worker: Pubkey,
 ) -> Instruction {
     Instruction {
-        program_id: clockwork_network_program::ID,
+        program_id: mat_clockwork_network_program::ID,
         accounts: vec![
             AccountMeta::new_readonly(associated_token::ID, false),
             AccountMeta::new(authority, true),
@@ -34,6 +34,6 @@ pub fn worker_create(
             AccountMeta::new(worker, false),
             AccountMeta::new(get_associated_token_address(&worker, &mint), false),
         ],
-        data: clockwork_network_program::instruction::WorkerCreate {}.data(),
+        data: mat_clockwork_network_program::instruction::WorkerCreate {}.data(),
     }
 }

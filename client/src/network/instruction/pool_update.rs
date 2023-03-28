@@ -7,7 +7,7 @@ use {
         },
         InstructionData,
     },
-    clockwork_network_program::state::*,
+    mat_clockwork_network_program::state::*,
 };
 
 pub fn pool_update(
@@ -17,7 +17,7 @@ pub fn pool_update(
     settings: PoolSettings,
 ) -> Instruction {
     Instruction {
-        program_id: clockwork_network_program::ID,
+        program_id: mat_clockwork_network_program::ID,
         accounts: vec![
             AccountMeta::new_readonly(admin, true),
             AccountMeta::new_readonly(Config::pubkey(), false),
@@ -25,6 +25,6 @@ pub fn pool_update(
             AccountMeta::new(pool, false),
             AccountMeta::new_readonly(system_program::ID, false),
         ],
-        data: clockwork_network_program::instruction::PoolUpdate { settings }.data(),
+        data: mat_clockwork_network_program::instruction::PoolUpdate { settings }.data(),
     }
 }

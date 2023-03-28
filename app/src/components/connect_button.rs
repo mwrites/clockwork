@@ -1,4 +1,4 @@
-use clockwork_utils::pubkey::Abbreviated;
+use mat_clockwork_utils::pubkey::Abbreviated;
 use dioxus::prelude::*;
 use gloo_events::EventListener;
 use gloo_storage::{LocalStorage, Storage};

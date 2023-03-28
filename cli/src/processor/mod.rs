@@ -13,7 +13,7 @@ mod worker;
 
 use anyhow::Result;
 use clap::ArgMatches;
-use clockwork_client::Client;
+use mat_clockwork_client::Client;
 use solana_sdk::signature::read_keypair_file;
 
 use crate::{

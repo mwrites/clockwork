@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use anchor_lang::prelude::Pubkey;
-use clockwork_relayer_api::{SecretCreate, SignedRequest};
+use mat_clockwork_relayer_api::{SecretCreate, SignedRequest};
 use dioxus::prelude::*;
 use dioxus_router::use_router;
 use reqwest::header::CONTENT_TYPE;

@@ -1,5 +1,5 @@
 use anchor_lang::{prelude::*, AnchorDeserialize, AnchorSerialize};
-use clockwork_utils::thread::{ClockData, SerializableInstruction, Trigger};
+use mat_clockwork_utils::thread::{ClockData, SerializableInstruction, Trigger};
 
 pub const SEED_THREAD: &[u8] = b"thread";
 

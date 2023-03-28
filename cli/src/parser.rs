@@ -1,6 +1,6 @@
 use crate::{cli::CliCommand, errors::CliError};
 use clap::ArgMatches;
-use clockwork_client::{
+use mat_clockwork_client::{
     thread::state::{SerializableAccount, SerializableInstruction, Trigger},
     webhook::state::HttpMethod,
 };

@@ -1,8 +1,8 @@
 use {
     crate::errors::CliError,
     chrono::{DateTime, NaiveDateTime, Utc},
-    clockwork_client::Client,
-    clockwork_cron::Schedule,
+    mat_clockwork_client::Client,
+    mat_clockwork_cron::Schedule,
     std::str::FromStr,
 };
 

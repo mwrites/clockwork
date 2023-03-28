@@ -4,7 +4,7 @@ use std::io::Write;
 use {
     crate::{errors::CliError, parser::ProgramInfo},
     anyhow::Result,
-    clockwork_client::{
+    mat_clockwork_client::{
         network::state::ConfigSettings,
         thread::state::{Thread, Trigger},
         Client,
@@ -39,7 +39,7 @@ pub fn start(
 
     // Initialize Clockwork
     let mint_pubkey =
-        mint_clockwork_token(client).map_err(|err| CliError::FailedTransaction(err.to_string()))?;
+        mint_mat_clockwork_token(client).map_err(|err| CliError::FailedTransaction(err.to_string()))?;
     super::initialize::initialize(client, mint_pubkey)?;
     register_worker(client).map_err(|err| CliError::FailedTransaction(err.to_string()))?;
     create_threads(client, mint_pubkey)
@@ -89,7 +89,7 @@ fn get_validator_version() -> String {
         })
 }
 
-fn mint_clockwork_token(client: &Client) -> Result<Pubkey> {
+fn mint_mat_clockwork_token(client: &Client) -> Result<Pubkey> {
     // Calculate rent and pubkeys
     let mint_keypair = Keypair::new();
     let mint_rent = client
@@ -143,7 +143,7 @@ fn mint_clockwork_token(client: &Client) -> Result<Pubkey> {
 
 fn register_worker(client: &Client) -> Result<()> {
     // Create the worker
-    let cfg = get_clockwork_config()?;
+    let cfg = get_mat_clockwork_config()?;
     let keypath = format!(
         "{}/lib/clockwork-worker-keypair.json",
         cfg["home"].as_str().unwrap()
@@ -162,17 +162,17 @@ fn create_threads(client: &Client, mint_pubkey: Pubkey) -> Result<()> {
     // Create epoch thread.
     let epoch_thread_id = "clockwork.network.epoch";
     let epoch_thread_pubkey = Thread::pubkey(client.payer_pubkey(), epoch_thread_id.into());
-    let ix_a = clockwork_client::thread::instruction::thread_create(
+    let ix_a = mat_clockwork_client::thread::instruction::thread_create(
         LAMPORTS_PER_SOL,
         client.payer_pubkey(),
         epoch_thread_id.into(),
         vec![
-            clockwork_client::network::job::distribute_fees(epoch_thread_pubkey).into(),
-            clockwork_client::network::job::process_unstakes(epoch_thread_pubkey).into(),
-            clockwork_client::network::job::stake_delegations(epoch_thread_pubkey).into(),
-            clockwork_client::network::job::take_snapshot(epoch_thread_pubkey).into(),
-            clockwork_client::network::job::increment_epoch(epoch_thread_pubkey).into(),
-            clockwork_client::network::job::delete_snapshot(epoch_thread_pubkey).into(),
+            mat_clockwork_client::network::job::distribute_fees(epoch_thread_pubkey).into(),
+            mat_clockwork_client::network::job::process_unstakes(epoch_thread_pubkey).into(),
+            mat_clockwork_client::network::job::stake_delegations(epoch_thread_pubkey).into(),
+            mat_clockwork_client::network::job::take_snapshot(epoch_thread_pubkey).into(),
+            mat_clockwork_client::network::job::increment_epoch(epoch_thread_pubkey).into(),
+            mat_clockwork_client::network::job::delete_snapshot(epoch_thread_pubkey).into(),
         ],
         client.payer_pubkey(),
         epoch_thread_pubkey,
@@ -185,12 +185,12 @@ fn create_threads(client: &Client, mint_pubkey: Pubkey) -> Result<()> {
     // Create hasher thread.
     let hasher_thread_id = "clockwork.network.hasher";
     let hasher_thread_pubkey = Thread::pubkey(client.payer_pubkey(), hasher_thread_id.into());
-    let ix_b = clockwork_client::thread::instruction::thread_create(
+    let ix_b = mat_clockwork_client::thread::instruction::thread_create(
         LAMPORTS_PER_SOL,
         client.payer_pubkey(),
         hasher_thread_id.into(),
         vec![
-            clockwork_client::network::instruction::registry_nonce_hash(hasher_thread_pubkey)
+            mat_clockwork_client::network::instruction::registry_nonce_hash(hasher_thread_pubkey)
                 .into(),
         ],
         client.payer_pubkey(),
@@ -202,7 +202,7 @@ fn create_threads(client: &Client, mint_pubkey: Pubkey) -> Result<()> {
     );
 
     // Update config with thread pubkeys
-    let ix_c = clockwork_client::network::instruction::config_update(
+    let ix_c = mat_clockwork_client::network::instruction::config_update(
         client.payer_pubkey(),
         ConfigSettings {
             admin: client.payer_pubkey(),
@@ -227,15 +227,15 @@ fn start_test_validator(
     println!("Starting test validator");
 
     // Get Clockwork home path
-    let cfg = get_clockwork_config()?;
+    let cfg = get_mat_clockwork_config()?;
     let home_dir = cfg["home"].as_str().unwrap();
 
     // TODO Build a custom plugin config
     let mut process = Command::new("solana-test-validator")
         .arg("-r")
-        .bpf_program(home_dir, clockwork_client::network::ID, "network")
-        .bpf_program(home_dir, clockwork_client::thread::ID, "thread")
-        .bpf_program(home_dir, clockwork_client::webhook::ID, "webhook")
+        .bpf_program(home_dir, mat_clockwork_client::network::ID, "network")
+        .bpf_program(home_dir, mat_clockwork_client::thread::ID, "thread")
+        .bpf_program(home_dir, mat_clockwork_client::webhook::ID, "webhook")
         .network_url(network_url)
         .clone_addresses(clone_addresses)
         .add_programs_with_path(program_infos)
@@ -275,16 +275,16 @@ fn lib_path(home_dir: &str, filename: &str) -> String {
     format!("{}/lib/{}", home_dir, filename)
 }
 
-fn get_clockwork_config() -> Result<serde_yaml::Value> {
-    let clockwork_config_path = dirs_next::home_dir()
+fn get_mat_clockwork_config() -> Result<serde_yaml::Value> {
+    let mat_clockwork_config_path = dirs_next::home_dir()
         .map(|mut path| {
             path.extend(&[".config", "solana", "clockwork", "config.yml"]);
             path.to_str().unwrap().to_string()
         })
         .unwrap();
-    let f = std::fs::File::open(clockwork_config_path)?;
-    let clockwork_config: serde_yaml::Value = serde_yaml::from_reader(f)?;
-    Ok(clockwork_config)
+    let f = std::fs::File::open(mat_clockwork_config_path)?;
+    let mat_clockwork_config: serde_yaml::Value = serde_yaml::from_reader(f)?;
+    Ok(mat_clockwork_config)
 }
 
 trait TestValidatorHelpers {
@@ -316,7 +316,7 @@ impl TestValidatorHelpers for Command {
         program_id: Pubkey,
         program_name: &str,
     ) -> &mut Command {
-        let filename = format!("clockwork_{}_program.so", program_name);
+        let filename = format!("mat_clockwork_{}_program.so", program_name);
         self.arg("--bpf-program")
             .arg(program_id.to_string())
             .arg(lib_path(home_dir, filename.as_str()))

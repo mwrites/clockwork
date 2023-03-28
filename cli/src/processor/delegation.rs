@@ -1,5 +1,5 @@
 use anchor_lang::AccountDeserialize;
-use clockwork_client::{
+use mat_clockwork_client::{
     network::state::{Config, Delegation, Worker},
     Client,
 };
@@ -26,7 +26,7 @@ pub fn create(client: &Client, worker_id: u64) -> Result<(), CliError> {
 
     // Build ix
     let delegation_pubkey = Delegation::pubkey(worker_pubkey, worker.total_delegations);
-    let ix = clockwork_client::network::instruction::delegation_create(
+    let ix = mat_clockwork_client::network::instruction::delegation_create(
         client.payer_pubkey(),
         delegation_pubkey,
         config.mint,
@@ -56,7 +56,7 @@ pub fn deposit(
     // Build ix
     let worker_pubkey = Worker::pubkey(worker_id);
     let delegation_pubkey = Delegation::pubkey(worker_pubkey, delegation_id);
-    let ix = clockwork_client::network::instruction::delegation_deposit(
+    let ix = mat_clockwork_client::network::instruction::delegation_deposit(
         amount,
         client.payer_pubkey(),
         delegation_pubkey,
@@ -86,7 +86,7 @@ pub fn withdraw(
     // Build ix
     let worker_pubkey = Worker::pubkey(worker_id);
     let delegation_pubkey = Delegation::pubkey(worker_pubkey, delegation_id);
-    let ix = clockwork_client::network::instruction::delegation_withdraw(
+    let ix = mat_clockwork_client::network::instruction::delegation_withdraw(
         amount,
         client.payer_pubkey(),
         delegation_pubkey,

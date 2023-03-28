@@ -1,4 +1,4 @@
-use clockwork_thread_program::state::ThreadSettings;
+use mat_clockwork_thread_program::state::ThreadSettings;
 
 use anchor_lang::{
     solana_program::{
@@ -11,12 +11,12 @@ use anchor_lang::{
 
 pub fn thread_update(authority: Pubkey, thread: Pubkey, settings: ThreadSettings) -> Instruction {
     Instruction {
-        program_id: clockwork_thread_program::ID,
+        program_id: mat_clockwork_thread_program::ID,
         accounts: vec![
             AccountMeta::new_readonly(authority, true),
             AccountMeta::new_readonly(system_program::ID, false),
             AccountMeta::new(thread, false),
         ],
-        data: clockwork_thread_program::instruction::ThreadUpdate { settings }.data(),
+        data: mat_clockwork_thread_program::instruction::ThreadUpdate { settings }.data(),
     }
 }

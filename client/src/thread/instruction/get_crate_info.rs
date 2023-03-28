@@ -8,8 +8,8 @@ use anchor_lang::{
 
 pub fn get_crate_info() -> Instruction {
     Instruction {
-        program_id: clockwork_thread_program::ID,
+        program_id: mat_clockwork_thread_program::ID,
         accounts: vec![AccountMeta::new_readonly(system_program::ID, false)],
-        data: clockwork_thread_program::instruction::GetCrateInfo {}.data(),
+        data: mat_clockwork_thread_program::instruction::GetCrateInfo {}.data(),
     }
 }

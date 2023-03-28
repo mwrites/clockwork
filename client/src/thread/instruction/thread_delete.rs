@@ -8,12 +8,12 @@ use anchor_lang::{
 
 pub fn thread_delete(authority: Pubkey, close_to: Pubkey, thread: Pubkey) -> Instruction {
     Instruction {
-        program_id: clockwork_thread_program::ID,
+        program_id: mat_clockwork_thread_program::ID,
         accounts: vec![
             AccountMeta::new_readonly(authority, true),
             AccountMeta::new(close_to, true),
             AccountMeta::new(thread, false),
         ],
-        data: clockwork_thread_program::instruction::ThreadDelete {}.data(),
+        data: mat_clockwork_thread_program::instruction::ThreadDelete {}.data(),
     }
 }

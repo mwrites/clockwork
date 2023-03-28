@@ -1,6 +1,6 @@
 use crate::parser::ProgramInfo;
 use clap::{Arg, ArgGroup, Command};
-use clockwork_client::{
+use mat_clockwork_client::{
     thread::state::{SerializableInstruction, Trigger},
     webhook::state::HttpMethod,
 };

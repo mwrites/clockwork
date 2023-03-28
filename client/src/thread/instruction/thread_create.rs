@@ -6,7 +6,7 @@ use anchor_lang::{
     },
     InstructionData,
 };
-use clockwork_thread_program::state::{SerializableInstruction, Trigger};
+use mat_clockwork_thread_program::state::{SerializableInstruction, Trigger};
 
 pub fn thread_create(
     amount: u64,
@@ -18,14 +18,14 @@ pub fn thread_create(
     trigger: Trigger,
 ) -> Instruction {
     Instruction {
-        program_id: clockwork_thread_program::ID,
+        program_id: mat_clockwork_thread_program::ID,
         accounts: vec![
             AccountMeta::new_readonly(authority, true),
             AccountMeta::new(payer, true),
             AccountMeta::new_readonly(system_program::ID, false),
             AccountMeta::new(thread, false),
         ],
-        data: clockwork_thread_program::instruction::ThreadCreate {
+        data: mat_clockwork_thread_program::instruction::ThreadCreate {
             amount,
             id,
             instructions,

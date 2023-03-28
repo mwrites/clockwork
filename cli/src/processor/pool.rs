@@ -1,8 +1,8 @@
-use clockwork_client::network::state::PoolSettings;
+use mat_clockwork_client::network::state::PoolSettings;
 
 use {
     crate::errors::CliError,
-    clockwork_client::{
+    mat_clockwork_client::{
         network::state::{Pool, Registry},
         Client,
     },
@@ -36,7 +36,7 @@ pub fn list(client: &Client) -> Result<(), CliError> {
 
 pub fn update(client: &Client, id: u64, size: usize) -> Result<(), CliError> {
     let pool_pubkey = Pool::pubkey(id);
-    let ix = clockwork_client::network::instruction::pool_update(
+    let ix = mat_clockwork_client::network::instruction::pool_update(
         client.payer_pubkey(),
         client.payer_pubkey(),
         pool_pubkey,

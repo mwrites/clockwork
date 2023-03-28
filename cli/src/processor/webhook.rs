@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 // use anchor_lang::prelude::*;
 use anchor_lang::{InstructionData, ToAccountMetas};
-use clockwork_client::{
+use mat_clockwork_client::{
     webhook::state::{HttpMethod, Webhook},
     Client,
 };
@@ -23,15 +23,15 @@ pub fn create(
         "TEST {HBUh9g46wk2X89CvaNN15UmsznP59rh6od1h8JwYAopk:hello}".into(),
     );
     let ix = Instruction {
-        program_id: clockwork_webhook_program::ID,
-        accounts: clockwork_webhook_program::accounts::WebhookCreate {
+        program_id: mat_clockwork_webhook_program::ID,
+        accounts: mat_clockwork_webhook_program::accounts::WebhookCreate {
             authority: client.payer_pubkey(),
             payer: client.payer_pubkey(),
             webhook: Webhook::pubkey(client.payer_pubkey(), id.clone()),
             system_program: system_program::ID,
         }
         .to_account_metas(Some(true)),
-        data: clockwork_webhook_program::instruction::WebhookCreate {
+        data: mat_clockwork_webhook_program::instruction::WebhookCreate {
             body,
             headers,
             id: id.clone(),

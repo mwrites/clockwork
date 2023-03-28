@@ -1,6 +1,6 @@
 use {
     crate::errors::CliError,
-    clockwork_client::{
+    mat_clockwork_client::{
         network::state::{Config, ConfigSettings},
         Client,
     },
@@ -35,7 +35,7 @@ pub fn set(
     };
 
     // Submit tx
-    let ix = clockwork_client::network::instruction::config_update(client.payer_pubkey(), settings);
+    let ix = mat_clockwork_client::network::instruction::config_update(client.payer_pubkey(), settings);
     client.send_and_confirm(&[ix], &[client.payer()]).unwrap();
     get(client)?;
     Ok(())

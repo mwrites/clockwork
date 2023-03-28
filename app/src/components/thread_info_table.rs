@@ -1,4 +1,4 @@
-use clockwork_thread_program_v2::state::{Trigger, VersionedThread};
+use mat_clockwork_thread_program_v2::state::{Trigger, VersionedThread};
 use dioxus::prelude::*;
 use solana_client_wasm::solana_sdk::account::Account;
 

@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use anchor_lang::{prelude::Pubkey, Discriminator};
-use clockwork_utils::pubkey::Abbreviated;
+use mat_clockwork_utils::pubkey::Abbreviated;
 use dioxus::{html::input_data::keyboard_types::Key, prelude::*};
 use dioxus_router::{use_router, Link};
 use wasm_bindgen::JsCast;
@@ -113,9 +113,9 @@ pub fn SearchResults(cx: Scope) -> Element {
                         }
 
                         // If account belongs to the thread program, go to /programs/thread/:address
-                        if account.owner.eq(&clockwork_thread_program_v2::ID) {
+                        if account.owner.eq(&mat_clockwork_thread_program_v2::ID) {
                             let d = &account.data[..8];
-                            if d.eq(&clockwork_thread_program_v2::state::Thread::discriminator()) {
+                            if d.eq(&mat_clockwork_thread_program_v2::state::Thread::discriminator()) {
                                 return vec![SearchResult {
                                     title: format!("Go to thread {}", address.abbreviated()),
                                     route: format!("/programs/threads/{}", address),

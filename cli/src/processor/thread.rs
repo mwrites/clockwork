@@ -1,15 +1,15 @@
 use anchor_lang::AccountDeserialize;
-use clockwork_client::{
+use mat_clockwork_client::{
     thread::state::{SerializableInstruction, Thread, ThreadSettings, Trigger, VersionedThread},
     Client,
 };
-use clockwork_utils::CrateInfo;
+use mat_clockwork_utils::CrateInfo;
 use solana_sdk::pubkey::Pubkey;
 
 use crate::errors::CliError;
 
 pub fn crate_info(client: &Client) -> Result<(), CliError> {
-    let ix = clockwork_client::thread::instruction::get_crate_info();
+    let ix = mat_clockwork_client::thread::instruction::get_crate_info();
     let crate_info: CrateInfo = client.get_return_data(ix).unwrap();
     println!("{:#?}", crate_info);
     Ok(())
@@ -22,7 +22,7 @@ pub fn create(
     trigger: Trigger,
 ) -> Result<(), CliError> {
     let thread_pubkey = Thread::pubkey(client.payer_pubkey(), id.clone().into_bytes());
-    let ix = clockwork_client::thread::instruction::thread_create(
+    let ix = mat_clockwork_client::thread::instruction::thread_create(
         0,
         client.payer_pubkey(),
         id.into_bytes(),
@@ -38,7 +38,7 @@ pub fn create(
 
 pub fn delete(client: &Client, id: String) -> Result<(), CliError> {
     let thread_pubkey = Thread::pubkey(client.payer_pubkey(), id.into_bytes());
-    let ix = clockwork_client::thread::instruction::thread_delete(
+    let ix = mat_clockwork_client::thread::instruction::thread_delete(
         client.payer_pubkey(),
         client.payer_pubkey(),
         thread_pubkey,
@@ -60,7 +60,7 @@ pub fn get(client: &Client, address: Pubkey) -> Result<(), CliError> {
 pub fn pause(client: &Client, id: String) -> Result<(), CliError> {
     let thread_pubkey = Thread::pubkey(client.payer_pubkey(), id.into_bytes());
     let ix =
-        clockwork_client::thread::instruction::thread_pause(client.payer_pubkey(), thread_pubkey);
+        mat_clockwork_client::thread::instruction::thread_pause(client.payer_pubkey(), thread_pubkey);
     client.send_and_confirm(&[ix], &[client.payer()]).unwrap();
     get(client, thread_pubkey)?;
     Ok(())
@@ -69,7 +69,7 @@ pub fn pause(client: &Client, id: String) -> Result<(), CliError> {
 pub fn resume(client: &Client, id: String) -> Result<(), CliError> {
     let thread_pubkey = Thread::pubkey(client.payer_pubkey(), id.into_bytes());
     let ix =
-        clockwork_client::thread::instruction::thread_resume(client.payer_pubkey(), thread_pubkey);
+        mat_clockwork_client::thread::instruction::thread_resume(client.payer_pubkey(), thread_pubkey);
     client.send_and_confirm(&[ix], &[client.payer()]).unwrap();
     get(client, thread_pubkey)?;
     Ok(())
@@ -78,7 +78,7 @@ pub fn resume(client: &Client, id: String) -> Result<(), CliError> {
 pub fn reset(client: &Client, id: String) -> Result<(), CliError> {
     let thread_pubkey = Thread::pubkey(client.payer_pubkey(), id.into_bytes());
     let ix =
-        clockwork_client::thread::instruction::thread_reset(client.payer_pubkey(), thread_pubkey);
+        mat_clockwork_client::thread::instruction::thread_reset(client.payer_pubkey(), thread_pubkey);
     client.send_and_confirm(&[ix], &[client.payer()]).unwrap();
     get(client, thread_pubkey)?;
     Ok(())
@@ -106,7 +106,7 @@ pub fn update(
         rate_limit,
         trigger,
     };
-    let ix = clockwork_client::thread::instruction::thread_update(
+    let ix = mat_clockwork_client::thread::instruction::thread_update(
         client.payer_pubkey(),
         thread_pubkey,
         settings,

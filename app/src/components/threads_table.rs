@@ -1,8 +1,8 @@
 use std::{str::FromStr, cmp::Ordering, collections::hash_map::DefaultHasher, hash::{Hash, Hasher}};
 use anchor_lang::prelude::Clock;
 use chrono::{DateTime, NaiveDateTime, Utc};
-use clockwork_thread_program_v2::state::{Trigger, TriggerContext, VersionedThread};
-use clockwork_utils::pubkey::Abbreviated;
+use mat_clockwork_thread_program_v2::state::{Trigger, TriggerContext, VersionedThread};
+use mat_clockwork_utils::pubkey::Abbreviated;
 use dioxus::prelude::*;
 use dioxus_router::Link;
 use solana_client_wasm::solana_sdk::account::Account;
@@ -475,7 +475,7 @@ fn Row(cx: Scope<RowProps>) -> Element {
 }
 
 fn next_timestamp(after: i64, schedule: String) -> Option<i64> {
-    match clockwork_cron::Schedule::from_str(&schedule) {
+    match mat_clockwork_cron::Schedule::from_str(&schedule) {
        Ok(schedule) => schedule.next_after(&DateTime::<Utc>::from_utc(
             NaiveDateTime::from_timestamp_opt(after, 0).unwrap(),
             Utc,

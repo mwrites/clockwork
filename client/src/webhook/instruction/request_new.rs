@@ -6,7 +6,7 @@ use anchor_lang::{
     },
     InstructionData,
 };
-use clockwork_webhook_program::objects::HttpMethod;
+use mat_clockwork_webhook_program::objects::HttpMethod;
 
 pub fn request_new(
     api: Pubkey,
@@ -16,12 +16,12 @@ pub fn request_new(
     payer: Pubkey,
     route: String,
 ) -> Instruction {
-    let config_pubkey = clockwork_webhook_program::objects::Config::pubkey();
-    let pool_pubkey = clockwork_pool_program::objects::Pool::pubkey("http_workers".into());
+    let config_pubkey = mat_clockwork_webhook_program::objects::Config::pubkey();
+    let pool_pubkey = mat_clockwork_pool_program::objects::Pool::pubkey("http_workers".into());
     let request_pubkey =
-        clockwork_webhook_program::objects::Request::pubkey(api, caller, id.clone());
+        mat_clockwork_webhook_program::objects::Request::pubkey(api, caller, id.clone());
     Instruction {
-        program_id: clockwork_webhook_program::ID,
+        program_id: mat_clockwork_webhook_program::ID,
         accounts: vec![
             AccountMeta::new_readonly(api, false),
             AccountMeta::new_readonly(caller, true),
@@ -32,6 +32,6 @@ pub fn request_new(
             AccountMeta::new(request_pubkey, false),
             AccountMeta::new_readonly(system_program::ID, false),
         ],
-        data: clockwork_webhook_program::instruction::RequestNew { id, method, route }.data(),
+        data: mat_clockwork_webhook_program::instruction::RequestNew { id, method, route }.data(),
     }
 }

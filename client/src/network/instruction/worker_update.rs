@@ -6,16 +6,16 @@ use anchor_lang::{
     },
     InstructionData,
 };
-use clockwork_network_program::state::*;
+use mat_clockwork_network_program::state::*;
 
 pub fn worker_update(authority: Pubkey, settings: WorkerSettings, worker: Pubkey) -> Instruction {
     Instruction {
-        program_id: clockwork_network_program::ID,
+        program_id: mat_clockwork_network_program::ID,
         accounts: vec![
             AccountMeta::new(authority, true),
             AccountMeta::new_readonly(system_program::ID, false),
             AccountMeta::new(worker, false),
         ],
-        data: clockwork_network_program::instruction::WorkerUpdate { settings }.data(),
+        data: mat_clockwork_network_program::instruction::WorkerUpdate { settings }.data(),
     }
 }

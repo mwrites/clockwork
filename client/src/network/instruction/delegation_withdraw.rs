@@ -6,7 +6,7 @@ use {
         },
         InstructionData,
     },
-    clockwork_network_program::state::*,
+    mat_clockwork_network_program::state::*,
     spl_associated_token_account::get_associated_token_address,
 };
 
@@ -17,7 +17,7 @@ pub fn delegation_withdraw(
     mint: Pubkey,
 ) -> Instruction {
     Instruction {
-        program_id: clockwork_network_program::ID,
+        program_id: mat_clockwork_network_program::ID,
         accounts: vec![
             AccountMeta::new(authority, true),
             AccountMeta::new(get_associated_token_address(&authority, &mint), false),
@@ -26,6 +26,6 @@ pub fn delegation_withdraw(
             AccountMeta::new(get_associated_token_address(&delegation, &mint), false),
             AccountMeta::new_readonly(anchor_spl::token::ID, false),
         ],
-        data: clockwork_network_program::instruction::DelegationWithdraw { amount }.data(),
+        data: mat_clockwork_network_program::instruction::DelegationWithdraw { amount }.data(),
     }
 }

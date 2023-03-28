@@ -1,7 +1,7 @@
 use std::convert::From;
 
 use dioxus::prelude::*;
-use clockwork_thread_program_v2::state::VersionedThread;
+use mat_clockwork_thread_program_v2::state::VersionedThread;
 use solana_client_wasm::solana_sdk::transaction::TransactionError;
 
 use crate::context::Client;
@@ -63,7 +63,7 @@ pub fn ThreadSimLogs(cx: Scope<ThreadSimLogsProps>) -> Element {
                                     // anchor_lang::solana_program::instruction::InstructionError::AccountBorrowOutstanding => todo!(),
                                     // anchor_lang::solana_program::instruction::InstructionError::DuplicateAccountOutOfSync => todo!(),
                                     anchor_lang::solana_program::instruction::InstructionError::Custom(err_code) => {
-                                        if err_code.eq(&u32::from(clockwork_thread_program_v2::errors::ClockworkError::TriggerConditionFailed)) {
+                                        if err_code.eq(&u32::from(mat_clockwork_thread_program_v2::errors::ClockworkError::TriggerConditionFailed)) {
                                             // TODO Let the user know this thread is waiting to be triggered.
                                             None
                                         } else {

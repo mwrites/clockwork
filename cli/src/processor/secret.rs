@@ -1,6 +1,6 @@
 use anchor_lang::prelude::Pubkey;
-use clockwork_client::Client;
-use clockwork_relayer_api::{
+use mat_clockwork_client::Client;
+use mat_clockwork_relayer_api::{
     SecretApprove, SecretCreate, SecretGet, SecretList, SecretRevoke, SignedRequest,
 };
 use reqwest::header::CONTENT_TYPE;

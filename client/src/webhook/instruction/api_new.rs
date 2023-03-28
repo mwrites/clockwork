@@ -13,9 +13,9 @@ pub fn api_new(
     base_url: String,
     payer: Pubkey,
 ) -> Instruction {
-    let api_pubkey = clockwork_webhook_program::objects::Api::pubkey(authority, base_url.clone());
+    let api_pubkey = mat_clockwork_webhook_program::objects::Api::pubkey(authority, base_url.clone());
     Instruction {
-        program_id: clockwork_webhook_program::ID,
+        program_id: mat_clockwork_webhook_program::ID,
         accounts: vec![
             AccountMeta::new_readonly(ack_authority, false),
             AccountMeta::new(api_pubkey, false),
@@ -23,6 +23,6 @@ pub fn api_new(
             AccountMeta::new(payer, true),
             AccountMeta::new_readonly(system_program::ID, false),
         ],
-        data: clockwork_webhook_program::instruction::ApiNew { base_url }.data(),
+        data: mat_clockwork_webhook_program::instruction::ApiNew { base_url }.data(),
     }
 }

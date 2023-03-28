@@ -1,5 +1,5 @@
 use anchor_lang::AccountDeserialize;
-use clockwork_client::{
+use mat_clockwork_client::{
     network::state::{
         Config, Fee, Penalty, Registry, Snapshot, SnapshotFrame, Worker, WorkerSettings,
     },
@@ -87,7 +87,7 @@ pub fn create(client: &Client, signatory: Keypair, silent: bool) -> Result<(), C
     // Build ix
     let worker_id = registry.total_workers;
     let worker_pubkey = Worker::pubkey(worker_id);
-    let ix = clockwork_client::network::instruction::worker_create(
+    let ix = mat_clockwork_client::network::instruction::worker_create(
         client.payer_pubkey(),
         config.mint,
         signatory.pubkey(),
@@ -114,7 +114,7 @@ pub fn update(client: &Client, id: u64, signatory: Option<Keypair>) -> Result<()
         commission_rate: 0,
         signatory: signatory.map_or(worker.signatory, |v| v.pubkey()),
     };
-    let ix = clockwork_client::network::instruction::worker_update(
+    let ix = mat_clockwork_client::network::instruction::worker_update(
         client.payer_pubkey(),
         settings,
         worker_pubkey,

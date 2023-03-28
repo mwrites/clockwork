@@ -6,7 +6,7 @@ use {
         },
         InstructionData,
     },
-    clockwork_network_program::state::*,
+    mat_clockwork_network_program::state::*,
 };
 
 pub fn pool_rotate(
@@ -17,7 +17,7 @@ pub fn pool_rotate(
     worker: Pubkey,
 ) -> Instruction {
     Instruction {
-        program_id: clockwork_network_program::ID,
+        program_id: mat_clockwork_network_program::ID,
         accounts: vec![
             AccountMeta::new_readonly(Config::pubkey(), false),
             AccountMeta::new(pool, false),
@@ -27,6 +27,6 @@ pub fn pool_rotate(
             AccountMeta::new_readonly(snapshot_frame, false),
             AccountMeta::new_readonly(worker, false),
         ],
-        data: clockwork_network_program::instruction::PoolRotate {}.data(),
+        data: mat_clockwork_network_program::instruction::PoolRotate {}.data(),
     }
 }

@@ -8,14 +8,14 @@ use anchor_lang::{
 };
 
 pub fn initialize(admin: Pubkey) -> Instruction {
-    let config_pubkey = clockwork_webhook_program::objects::Config::pubkey();
+    let config_pubkey = mat_clockwork_webhook_program::objects::Config::pubkey();
     Instruction {
-        program_id: clockwork_webhook_program::ID,
+        program_id: mat_clockwork_webhook_program::ID,
         accounts: vec![
             AccountMeta::new(admin, true),
             AccountMeta::new(config_pubkey, false),
             AccountMeta::new_readonly(system_program::ID, false),
         ],
-        data: clockwork_webhook_program::instruction::Initialize {}.data(),
+        data: mat_clockwork_webhook_program::instruction::Initialize {}.data(),
     }
 }

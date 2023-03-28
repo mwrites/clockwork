@@ -3,7 +3,7 @@ use anchor_spl::token::{
     spl_token::{self, state::Account as TokenAccount},
     Mint,
 };
-use clockwork_utils::ProgramLogsDeserializable;
+use mat_clockwork_utils::ProgramLogsDeserializable;
 use solana_client::{
     client_error, rpc_client::RpcClient, rpc_config::RpcSendTransactionConfig,
     rpc_response::RpcSimulateTransactionResult,

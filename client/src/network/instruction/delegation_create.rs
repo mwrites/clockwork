@@ -7,7 +7,7 @@ use {
         },
         InstructionData,
     },
-    clockwork_network_program::state::*,
+    mat_clockwork_network_program::state::*,
     spl_associated_token_account::get_associated_token_address,
 };
 
@@ -18,7 +18,7 @@ pub fn delegation_create(
     worker: Pubkey,
 ) -> Instruction {
     Instruction {
-        program_id: clockwork_network_program::ID,
+        program_id: mat_clockwork_network_program::ID,
         accounts: vec![
             AccountMeta::new_readonly(anchor_spl::associated_token::ID, false),
             AccountMeta::new(authority, true),
@@ -31,6 +31,6 @@ pub fn delegation_create(
             AccountMeta::new_readonly(anchor_spl::token::ID, false),
             AccountMeta::new(worker, false),
         ],
-        data: clockwork_network_program::instruction::DelegationCreate {}.data(),
+        data: mat_clockwork_network_program::instruction::DelegationCreate {}.data(),
     }
 }

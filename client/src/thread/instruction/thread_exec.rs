@@ -5,11 +5,11 @@ use anchor_lang::{
     },
     InstructionData,
 };
-use clockwork_network_program::state::{Fee, Pool};
+use mat_clockwork_network_program::state::{Fee, Pool};
 
 pub fn thread_exec(signatory: Pubkey, thread: Pubkey, worker: Pubkey) -> Instruction {
     Instruction {
-        program_id: clockwork_thread_program::ID,
+        program_id: mat_clockwork_thread_program::ID,
         accounts: vec![
             AccountMeta::new(Fee::pubkey(worker), false),
             AccountMeta::new_readonly(Pool::pubkey(0), false),
@@ -17,6 +17,6 @@ pub fn thread_exec(signatory: Pubkey, thread: Pubkey, worker: Pubkey) -> Instruc
             AccountMeta::new(thread, false),
             AccountMeta::new_readonly(worker, false),
         ],
-        data: clockwork_thread_program::instruction::ThreadExec {}.data(),
+        data: mat_clockwork_thread_program::instruction::ThreadExec {}.data(),
     }
 }
