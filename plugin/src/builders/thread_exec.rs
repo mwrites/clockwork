@@ -221,14 +221,14 @@ fn build_kickoff_ix(
     // Build the instruction.
     let mut kickoff_ix = match thread {
         VersionedThread::V1(_) => Instruction {
-            program_id: clockwork_thread_program_v1::ID,
-            accounts: clockwork_thread_program_v1::accounts::ThreadKickoff {
+            program_id: mat_clockwork_thread_program_v1::ID,
+            accounts: mat_clockwork_thread_program_v1::accounts::ThreadKickoff {
                 signatory: signatory_pubkey,
                 thread: thread_pubkey,
                 worker: worker_pubkey,
             }
             .to_account_metas(Some(false)),
-            data: clockwork_thread_program_v1::instruction::ThreadKickoff {}.data(),
+            data: mat_clockwork_thread_program_v1::instruction::ThreadKickoff {}.data(),
         },
         VersionedThread::V2(_) => Instruction {
             program_id: mat_clockwork_thread_program::ID,
@@ -268,8 +268,8 @@ fn build_exec_ix(
     // Build the instruction.
     let mut exec_ix = match thread {
         VersionedThread::V1(_) => Instruction {
-            program_id: clockwork_thread_program_v1::ID,
-            accounts: clockwork_thread_program_v1::accounts::ThreadExec {
+            program_id: mat_clockwork_thread_program_v1::ID,
+            accounts: mat_clockwork_thread_program_v1::accounts::ThreadExec {
                 fee: mat_clockwork_client::network::state::Fee::pubkey(worker_pubkey),
                 penalty: mat_clockwork_client::network::state::Penalty::pubkey(worker_pubkey),
                 pool: mat_clockwork_client::network::state::Pool::pubkey(0),
@@ -278,7 +278,7 @@ fn build_exec_ix(
                 worker: worker_pubkey,
             }
             .to_account_metas(Some(true)),
-            data: clockwork_thread_program_v1::instruction::ThreadExec {}.data(),
+            data: mat_clockwork_thread_program_v1::instruction::ThreadExec {}.data(),
         },
         VersionedThread::V2(_) => Instruction {
             program_id: mat_clockwork_thread_program::ID,

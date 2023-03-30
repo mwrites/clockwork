@@ -1,5 +1,5 @@
 use anchor_lang::{prelude::*, AccountDeserialize};
-use clockwork_thread_program_v1::{
+use mat_clockwork_thread_program_v1::{
     state::Thread as ThreadV1,
     typedefs::{Trigger as TriggerV1, TriggerContext as TriggerContextV1},
 };
@@ -67,7 +67,7 @@ impl VersionedThread {
                         .iter()
                         .map(|a| unsafe {
                             std::mem::transmute_copy::<
-                                clockwork_thread_program_v1::typedefs::AccountMetaData,
+                                mat_clockwork_thread_program_v1::typedefs::AccountMetaData,
                                 SerializableAccount,
                             >(a)
                         })
@@ -88,7 +88,7 @@ impl VersionedThread {
 
     pub fn program_id(&self) -> Pubkey {
         match self {
-            Self::V1(_) => clockwork_thread_program_v1::ID,
+            Self::V1(_) => mat_clockwork_thread_program_v1::ID,
             Self::V2(_) => crate::ID,
         }
     }

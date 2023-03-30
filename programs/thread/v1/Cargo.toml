@@ -1,11 +1,11 @@
 [package]
-name = "clockwork-thread-program-v1"
+name = "mat-clockwork-thread-program-v1"
 version = "2.0.2"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "clockwork_thread_program_v1"
+name = "mat_clockwork_thread_program_v1"
 
 [features]
 default = ["cpi"]

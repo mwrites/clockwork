@@ -1,7 +1,7 @@
 use anchor_lang::{AccountDeserialize, Discriminator};
 use bincode::deserialize;
 use mat_clockwork_client::webhook::state::Webhook;
-use clockwork_thread_program_v1::state::Thread as ThreadV1;
+use mat_clockwork_thread_program_v1::state::Thread as ThreadV1;
 use mat_clockwork_thread_program::state::{Thread as ThreadV2, VersionedThread};
 use solana_geyser_plugin_interface::geyser_plugin_interface::{
     GeyserPluginError, ReplicaAccountInfo,
@@ -34,7 +34,7 @@ impl TryFrom<&mut ReplicaAccountInfo<'_>> for AccountUpdateEvent {
         }
 
         // If the account belongs to the thread v1 program, parse it.
-        if owner_pubkey.eq(&clockwork_thread_program_v1::ID) && account_info.data.len() > 8 {
+        if owner_pubkey.eq(&mat_clockwork_thread_program_v1::ID) && account_info.data.len() > 8 {
             let d = &account_info.data[..8];
             if d.eq(&ThreadV1::discriminator()) {
                 return Ok(AccountUpdateEvent::Thread {
