@@ -120,6 +120,10 @@ fn publish_workspace(dry_run: bool, crates_io_token: &str, crates: Vec<CrateInfo
         publish_crate(dry_run, &crates_io_token, &_crate.manifest_path)
             .context(format!("Failed to publish crate {}", _crate.name))?;
 
+        if dry_run {
+            continue;
+        }
+
         // Retry checking if the crate version is uploaded to crates.io and available for download
         println!("Waiting for crate '{}' to appear in crates.io", _crate.name);
         let num_retries = CHECK_CRATES_IO_RETRIES;
