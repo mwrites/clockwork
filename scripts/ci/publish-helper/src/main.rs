@@ -57,10 +57,9 @@ fn main() -> Result<()> {
                 .takes_value(true),
         )
         .arg(
-            Arg::new("ignore-crate")
-                .short('i')
-                .long("ignore-crate")
-                .help("Ignore a crate from being published (arg can be supplied multiple times)")
+            Arg::new("exclude")
+                .long("exclude")
+                .help("Crates to exclude and not modify (arg can be supplied multiple times)")
                 .takes_value(true)
                 .multiple(true),
         )
