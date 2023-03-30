@@ -1,6 +1,6 @@
 [package]
 name = "mat-clockwork-thread-program-v1"
-version = "1.5.0"
+version = "1.6.0"
 description = "Clockwork thread program"
 edition = "2021"
 license = "AGPL-3.0-or-later"
@@ -19,7 +19,7 @@ default = ["cpi"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-cpi = ["no-entrypoint"]
+cpi = ["no-entrypoint", "anchor-gen/compat-program-result"]
 
 [dependencies]
 anchor-lang = "0.27.0"
