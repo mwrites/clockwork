@@ -1038,6 +1038,44 @@ dependencies = [
 ]
 
 [[package]]
+name = "clockwork_plugin"
+version = "2.0.2"
+dependencies = [
+ "anchor-lang",
+ "async-trait",
+ "async_once",
+ "bincode",
+ "bs58 0.4.0",
+ "bugsnag",
+ "cargo_toml",
+ "chrono",
+ "futures",
+ "lazy_static",
+ "log 0.4.17",
+ "mat-clockwork-client",
+ "mat-clockwork-cron",
+ "mat-clockwork-relayer-api",
+ "mat-clockwork-thread-program",
+ "mat-clockwork-thread-program-v1",
+ "mat-clockwork-utils",
+ "prost",
+ "reqwest",
+ "sentry",
+ "serde",
+ "serde_json",
+ "simple-error",
+ "solana-account-decoder",
+ "solana-client",
+ "solana-geyser-plugin-interface",
+ "solana-logger",
+ "solana-program",
+ "solana-sdk",
+ "solana-transaction-status",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
 name = "codespan-reporting"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2496,7 +2534,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-thread-program-v1"
-version = "2.0.2"
+version = "1.4.4"
 dependencies = [
  "anchor-gen",
  "anchor-lang",
@@ -2519,44 +2557,6 @@ dependencies = [
  "mat-clockwork-network-program",
  "mat-clockwork-utils",
  "serde",
-]
-
-[[package]]
-name = "mat_clockwork_plugin"
-version = "2.0.2"
-dependencies = [
- "anchor-lang",
- "async-trait",
- "async_once",
- "bincode",
- "bs58 0.4.0",
- "bugsnag",
- "cargo_toml",
- "chrono",
- "futures",
- "lazy_static",
- "log 0.4.17",
- "mat-clockwork-client",
- "mat-clockwork-cron",
- "mat-clockwork-relayer-api",
- "mat-clockwork-thread-program",
- "mat-clockwork-thread-program-v1",
- "mat-clockwork-utils",
- "prost",
- "reqwest",
- "sentry",
- "serde",
- "serde_json",
- "simple-error",
- "solana-account-decoder",
- "solana-client",
- "solana-geyser-plugin-interface",
- "solana-logger",
- "solana-program",
- "solana-sdk",
- "solana-transaction-status",
- "thiserror",
- "tokio",
 ]
 
 [[package]]
@@ -3130,10 +3130,7 @@ dependencies = [
  "anyhow",
  "clap 3.2.23",
  "indexmap",
- "semver",
  "serde_json",
- "thiserror",
- "toml",
 ]
 
 [[package]]
