@@ -113,9 +113,9 @@ pub fn SearchResults(cx: Scope) -> Element {
                         }
 
                         // If account belongs to the thread program, go to /programs/thread/:address
-                        if account.owner.eq(&mat_clockwork_thread_program_v2::ID) {
+                        if account.owner.eq(&mat_clockwork_thread_program::ID) {
                             let d = &account.data[..8];
-                            if d.eq(&mat_clockwork_thread_program_v2::state::Thread::discriminator()) {
+                            if d.eq(&mat_clockwork_thread_program::state::Thread::discriminator()) {
                                 return vec![SearchResult {
                                     title: format!("Go to thread {}", address.abbreviated()),
                                     route: format!("/programs/threads/{}", address),

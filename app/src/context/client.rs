@@ -4,7 +4,7 @@ use anchor_lang::{
     Discriminator, InstructionData, ToAccountMetas,
 };
 use clockwork_sdk::{state::Thread, utils::PAYER_PUBKEY};
-use mat_clockwork_thread_program_v2::state::{Trigger, VersionedThread};
+use mat_clockwork_thread_program::state::{Trigger, VersionedThread};
 use js_sys::WebAssembly::RuntimeError;
 use serde::{Deserialize, Serialize};
 use solana_client_wasm::{
@@ -248,13 +248,13 @@ fn build_kickoff_ix(
         },
         VersionedThread::V2(_) => Instruction {
             program_id: thread.program_id(),
-            accounts: mat_clockwork_thread_program_v2::accounts::ThreadKickoff {
+            accounts: mat_clockwork_thread_program::accounts::ThreadKickoff {
                 signatory: signatory_pubkey,
                 thread: thread_pubkey,
                 worker: worker_pubkey,
             }
             .to_account_metas(Some(false)),
-            data: mat_clockwork_thread_program_v2::instruction::ThreadKickoff {}.data(),
+            data: mat_clockwork_thread_program::instruction::ThreadKickoff {}.data(),
         },
     };
 
@@ -298,7 +298,7 @@ fn build_exec_ix(
         },
         VersionedThread::V2(_) => Instruction {
             program_id: thread.program_id(),
-            accounts: mat_clockwork_thread_program_v2::accounts::ThreadExec {
+            accounts: mat_clockwork_thread_program::accounts::ThreadExec {
                 fee: mat_clockwork_network_program::state::Fee::pubkey(worker_pubkey),
                 pool: mat_clockwork_network_program::state::Pool::pubkey(0),
                 signatory: signatory_pubkey,
@@ -306,7 +306,7 @@ fn build_exec_ix(
                 worker: worker_pubkey,
             }
             .to_account_metas(Some(true)),
-            data: mat_clockwork_thread_program_v2::instruction::ThreadExec {}.data(),
+            data: mat_clockwork_thread_program::instruction::ThreadExec {}.data(),
         },
     };
 

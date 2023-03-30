@@ -10,7 +10,7 @@ use std::{
 use async_once::AsyncOnce;
 use bincode::serialize;
 use mat_clockwork_client::network::state::{Pool, Registry, Snapshot, SnapshotFrame, Worker};
-use mat_clockwork_thread_program_v2::state::VersionedThread;
+use mat_clockwork_thread_program::state::VersionedThread;
 use lazy_static::lazy_static;
 use log::info;
 use solana_client::{

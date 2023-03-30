@@ -1,7 +1,7 @@
 use std::{str::FromStr, cmp::Ordering, collections::hash_map::DefaultHasher, hash::{Hash, Hasher}};
 use anchor_lang::prelude::Clock;
 use chrono::{DateTime, NaiveDateTime, Utc};
-use mat_clockwork_thread_program_v2::state::{Trigger, TriggerContext, VersionedThread};
+use mat_clockwork_thread_program::state::{Trigger, TriggerContext, VersionedThread};
 use mat_clockwork_utils::pubkey::Abbreviated;
 use dioxus::prelude::*;
 use dioxus_router::Link;

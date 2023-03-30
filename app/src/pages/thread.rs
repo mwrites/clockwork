@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use anchor_lang::solana_program::pubkey::Pubkey;
-use mat_clockwork_thread_program_v2::state::VersionedThread;
+use mat_clockwork_thread_program::state::VersionedThread;
 use dioxus::prelude::*;
 use dioxus_router::use_route;
 use solana_client_wasm::{
