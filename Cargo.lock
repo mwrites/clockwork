@@ -1038,14 +1038,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "clockwork-thread-program-v1"
-version = "2.0.2"
-dependencies = [
- "anchor-gen",
- "anchor-lang",
-]
-
-[[package]]
 name = "codespan-reporting"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2494,12 +2486,20 @@ version = "2.0.2"
 dependencies = [
  "anchor-lang",
  "chrono",
- "clockwork-thread-program-v1",
  "mat-clockwork-cron",
  "mat-clockwork-network-program",
+ "mat-clockwork-thread-program-v1",
  "mat-clockwork-utils",
  "static-pubkey",
  "version",
+]
+
+[[package]]
+name = "mat-clockwork-thread-program-v1"
+version = "2.0.2"
+dependencies = [
+ "anchor-gen",
+ "anchor-lang",
 ]
 
 [[package]]
@@ -2533,7 +2533,6 @@ dependencies = [
  "bugsnag",
  "cargo_toml",
  "chrono",
- "clockwork-thread-program-v1",
  "futures",
  "lazy_static",
  "log 0.4.17",
@@ -2541,6 +2540,7 @@ dependencies = [
  "mat-clockwork-cron",
  "mat-clockwork-relayer-api",
  "mat-clockwork-thread-program",
+ "mat-clockwork-thread-program-v1",
  "mat-clockwork-utils",
  "prost",
  "reqwest",
