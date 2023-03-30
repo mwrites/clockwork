@@ -15,8 +15,8 @@ crate-type = ["cdylib", "lib"]
 name = "mat_clockwork_client"
 
 [dependencies]
-anchor-lang = "0.26.0"
-anchor-spl = { features = ["mint", "token"], version = "0.26.0" }
+anchor-lang = "0.27.0"
+anchor-spl = { features = ["mint", "token"], version = "0.27.0" }
 bincode = "1.3.3"
 borsh = "0.9.3"
 mat-clockwork-network-program = { path = "../programs/network", features = ["no-entrypoint"], version = "2.0.2" }
