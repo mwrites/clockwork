@@ -238,13 +238,13 @@ fn build_kickoff_ix(
     let mut kickoff_ix = match thread {
         VersionedThread::V1(_) => Instruction {
             program_id: thread.program_id(),
-            accounts: clockwork_thread_program_v1::accounts::ThreadKickoff {
+            accounts: mat_clockwork_thread_program_v1::accounts::ThreadKickoff {
                 signatory: signatory_pubkey,
                 thread: thread_pubkey,
                 worker: worker_pubkey,
             }
             .to_account_metas(Some(false)),
-            data: clockwork_thread_program_v1::instruction::ThreadKickoff {}.data(),
+            data: mat_clockwork_thread_program_v1::instruction::ThreadKickoff {}.data(),
         },
         VersionedThread::V2(_) => Instruction {
             program_id: thread.program_id(),
@@ -285,7 +285,7 @@ fn build_exec_ix(
     let mut exec_ix = match thread {
         VersionedThread::V1(_) => Instruction {
             program_id: thread.program_id(),
-            accounts: clockwork_thread_program_v1::accounts::ThreadExec {
+            accounts: mat_clockwork_thread_program_v1::accounts::ThreadExec {
                 fee: mat_clockwork_network_program::state::Fee::pubkey(worker_pubkey),
                 penalty: mat_clockwork_network_program::state::Penalty::pubkey(worker_pubkey),
                 pool: mat_clockwork_network_program::state::Pool::pubkey(0),
@@ -294,7 +294,7 @@ fn build_exec_ix(
                 worker: worker_pubkey,
             }
             .to_account_metas(Some(true)),
-            data: clockwork_thread_program_v1::instruction::ThreadExec {}.data(),
+            data: mat_clockwork_thread_program_v1::instruction::ThreadExec {}.data(),
         },
         VersionedThread::V2(_) => Instruction {
             program_id: thread.program_id(),
