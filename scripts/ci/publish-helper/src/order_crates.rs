@@ -4,15 +4,21 @@ use std::collections::HashSet;
 use std::path::PathBuf;
 use std::process::Command;
 
-const CLOCKWORK_CRATE_PREFIX: &str = "mat-clockwork";
+#[derive(Debug, Clone)]
+pub struct CrateInfo {
+    pub name: String,
+    pub version: String,
+    pub manifest_path: PathBuf,
+    pub dependencies: Vec<String>,
+}
 
-pub fn order_crates_for_publishing() -> Result<Vec<(String, PathBuf)>> {
+pub fn order_crates_for_publishing(ignore_crates: HashSet<String>, crate_prefix: &str) -> Result<Vec<CrateInfo>> {
     let metadata = load_metadata()?;
     let packages = metadata["packages"]
         .as_array()
         .context("Failed to parse packages array")?;
 
-    let mut manifest_path = IndexMap::new();
+    let mut crates_map = IndexMap::new();
     let mut dependency_graph = IndexMap::new();
     for pkg in packages {
         let pkg_name = pkg["name"]
@@ -23,7 +29,6 @@ pub fn order_crates_for_publishing() -> Result<Vec<(String, PathBuf)>> {
             .as_str()
             .context("Failed to parse package version")?
             .to_string();
-        println!("{} {}", pkg_name, pkg_version);
         let pkg_manifest_path = pkg["manifest_path"]
             .as_str()
             .context("Failed to parse package manifest path")?
@@ -33,12 +38,10 @@ pub fn order_crates_for_publishing() -> Result<Vec<(String, PathBuf)>> {
             .context("Failed to parse package dependencies")?;
 
         // Check if the crate is marked as unpublishable and skip to the next crate if so
-        if pkg["publish"].as_array().is_some() {
+        if pkg["publish"].as_array().is_some() || ignore_crates.contains(&pkg_name) {
             println!("{} is marked as unpublishable", pkg_name);
             continue;
         }
-
-        manifest_path.insert(pkg_name.clone(), PathBuf::from(pkg_manifest_path));
 
         let solana_dependencies: Vec<String> = pkg_dependencies
             .iter()
@@ -50,9 +53,17 @@ pub fn order_crates_for_publishing() -> Result<Vec<(String, PathBuf)>> {
             })
             .collect::<Result<Vec<String>>>()?
             .into_iter()
-            .filter(|x| x.starts_with(CLOCKWORK_CRATE_PREFIX))
+            .filter(|x| x.starts_with(crate_prefix))
             .collect();
 
+        let crate_info = CrateInfo {
+            name: pkg_name.clone(),
+            version: pkg_version,
+            manifest_path: PathBuf::from(pkg_manifest_path),
+            dependencies: solana_dependencies.clone(),
+        };
+
+        crates_map.insert(pkg_name.clone(), crate_info);
         dependency_graph.insert(pkg_name, solana_dependencies);
     }
 
@@ -61,7 +72,7 @@ pub fn order_crates_for_publishing() -> Result<Vec<(String, PathBuf)>> {
         let mut deleted_packages = HashSet::new();
         for (package, dependencies) in &dependency_graph {
             if dependencies.iter().all(|dep| !dependency_graph.contains_key(dep)) {
-                sorted_dependency_graph.push((package.clone(), manifest_path[package].clone()));
+                sorted_dependency_graph.push(crates_map[package].clone());
                 deleted_packages.insert(package.clone());
             }
         }
