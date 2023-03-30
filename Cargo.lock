@@ -3893,6 +3893,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "publish-helper"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap 3.2.23",
+ "indexmap",
+ "semver",
+ "serde_json",
+ "thiserror",
+ "toml",
+]
+
+[[package]]
 name = "pyth-sdk"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

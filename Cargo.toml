@@ -7,7 +7,7 @@ members = [
     "plugin",
     "programs/*",
     "relayer",
-    #"scripts/ci/publish-helper",
+    "scripts/ci/publish-helper",
     "sdk",
     "utils"
 ]
