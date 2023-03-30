@@ -2534,7 +2534,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-thread-program-v1"
-version = "1.5.0"
+version = "1.8.0"
 dependencies = [
  "anchor-gen",
  "anchor-lang",
