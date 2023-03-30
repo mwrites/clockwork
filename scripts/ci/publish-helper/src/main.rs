@@ -70,7 +70,7 @@ fn main() -> Result<()> {
     let show_order = matches.is_present("show-order");
 
     let ignored_crates: HashSet<String> = matches
-        .values_of("ignore-crate")
+        .values_of("exclude")
         .map(|values| values.map(|s| s.to_string()).collect())
         .unwrap_or_default();
 
