@@ -10,25 +10,25 @@ fn main() {
 }
 
 fn get_geyser_interface_version() -> String {
-    // "2.0.2".into()
-    let plugin_manifest = Manifest::from_path("../plugin/Cargo.toml").unwrap();
-    let plugin_interface = plugin_manifest
-        .dependencies
-        .get("solana-geyser-plugin-interface")
-        .unwrap();
+     "2.0.2".into()
+    //let plugin_manifest = Manifest::from_path("../plugin/Cargo.toml").unwrap();
+    //let plugin_interface = plugin_manifest
+    //    .dependencies
+    //    .get("solana-geyser-plugin-interface")
+    //    .unwrap();
 
-    let semver = match plugin_interface {
-        Dependency::Simple(version) => version.into(),
-        Dependency::Detailed(detail) => detail.version.as_ref().unwrap().into(),
-        _ => "unknown (error parsing Plugin's Cargo.toml)".to_string(),
-    };
+    //let semver = match plugin_interface {
+    //    Dependency::Simple(version) => version.into(),
+    //    Dependency::Detailed(detail) => detail.version.as_ref().unwrap().into(),
+    //    _ => "unknown (error parsing Plugin's Cargo.toml)".to_string(),
+    //};
 
-    let re = Regex::new(r"(\d+\.\d+\.\d+)").unwrap();
-    re.captures(&semver)
-        .unwrap()
-        .get(1)
-        .map_or("unknown (error parsing solana-geyser-plugin-interface version)", |m| {
-            m.as_str()
-        })
-        .into()
+    //let re = Regex::new(r"(\d+\.\d+\.\d+)").unwrap();
+    //re.captures(&semver)
+    //    .unwrap()
+    //    .get(1)
+    //    .map_or("unknown (error parsing solana-geyser-plugin-interface version)", |m| {
+    //        m.as_str()
+    //    })
+    //    .into()
 }
