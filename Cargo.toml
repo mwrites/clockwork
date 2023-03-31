@@ -7,10 +7,10 @@ members = [
     "plugin",
     "programs/*",
     "relayer",
-    "scripts/ci/publish-helper",
     "sdk",
     "utils"
 ]
+exclude = ["scripts/ci/publish-helper"]
 
 [patch.crates-io]
 dioxus = { git = "https://github.com/DioxusLabs/dioxus", branch = "master" }

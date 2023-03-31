@@ -1,5 +1,5 @@
-use cargo_toml::{Dependency, Manifest};
-use regex::Regex;
+
+
 
 fn main() {
     let geyser_interface_version = get_geyser_interface_version();
@@ -10,7 +10,7 @@ fn main() {
 }
 
 fn get_geyser_interface_version() -> String {
-     "2.0.2".into()
+     "2.0.4".into()
     //let plugin_manifest = Manifest::from_path("../plugin/Cargo.toml").unwrap();
     //let plugin_interface = plugin_manifest
     //    .dependencies

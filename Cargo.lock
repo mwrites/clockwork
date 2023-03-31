@@ -1043,7 +1043,7 @@ dependencies = [
 
 [[package]]
 name = "clockwork_plugin"
-version = "2.0.2"
+version = "2.6.0"
 dependencies = [
  "anchor-lang",
  "async-trait",
@@ -2411,7 +2411,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-cli"
-version = "2.0.6"
+version = "2.6.0"
 dependencies = [
  "anchor-lang",
  "anyhow",
@@ -2444,7 +2444,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-client"
-version = "2.0.6"
+version = "2.6.0"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
@@ -2462,7 +2462,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-cron"
-version = "2.0.6"
+version = "2.6.0"
 dependencies = [
  "chrono",
  "nom",
@@ -2471,7 +2471,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-network-program"
-version = "2.0.6"
+version = "2.6.0"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
@@ -2480,7 +2480,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-relayer"
-version = "2.0.2"
+version = "2.6.0"
 dependencies = [
  "actix-cors",
  "actix-web",
@@ -2504,7 +2504,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-relayer-api"
-version = "2.0.2"
+version = "2.6.0"
 dependencies = [
  "bincode",
  "serde",
@@ -2513,7 +2513,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-sdk"
-version = "2.0.6"
+version = "2.6.0"
 dependencies = [
  "anchor-lang",
  "chrono",
@@ -2524,7 +2524,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-thread-program"
-version = "2.0.6"
+version = "2.6.0"
 dependencies = [
  "anchor-lang",
  "chrono",
@@ -2538,7 +2538,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-thread-program-v1"
-version = "1.9.0"
+version = "1.15.0"
 dependencies = [
  "anchor-lang",
  "clockwork-anchor-gen",
@@ -2546,7 +2546,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-utils"
-version = "2.0.6"
+version = "2.6.0"
 dependencies = [
  "anchor-lang",
  "base64 0.13.1",
@@ -2555,7 +2555,7 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-webhook-program"
-version = "2.0.6"
+version = "2.6.0"
 dependencies = [
  "anchor-lang",
  "mat-clockwork-network-program",
@@ -3125,16 +3125,6 @@ dependencies = [
  "proc-macro2 1.0.54",
  "quote 1.0.26",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "publish-helper"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap 3.2.23",
- "indexmap",
- "serde_json",
 ]
 
 [[package]]
