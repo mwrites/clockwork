@@ -1,6 +1,6 @@
 [package]
 name = "mat-clockwork-thread-program-v1"
-version = "1.8.0"
+version = "1.9.0"
 description = "Clockwork thread program"
 edition = "2021"
 license = "AGPL-3.0-or-later"
@@ -19,9 +19,9 @@ default = ["cpi"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-cpi = ["no-entrypoint", "anchor-gen/compat-program-result"]
+cpi = ["no-entrypoint"]
 
 [dependencies]
 anchor-lang = "0.27.0"
-anchor-gen = { git = "https://github.com/clockwork-xyz/anchor-gen", version = "^0.3.1", features = ["compat-program-result"] }
+clockwork-anchor-gen = { version = "0.3.1", features = ["compat-program-result"] }
 

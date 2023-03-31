@@ -1,6 +1,6 @@
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 
-anchor_gen::generate_cpi_interface!(idl_path = "idl.json");
+clockwork-anchor-gen::generate_cpi_interface!(idl_path = "idl.json");
 
 anchor_lang::prelude::declare_id!("3XXuUFfweXBwFgFfYaejLvZE4cGZiHgKiGfMtdxNzYmv");
 

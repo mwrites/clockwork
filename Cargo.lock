@@ -409,48 +409,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anchor-gen"
-version = "0.3.1"
-source = "git+https://github.com/clockwork-xyz/anchor-gen#cc4bad5720d770c627070b80427a38e1aedba18f"
-dependencies = [
- "anchor-generate-cpi-crate",
- "anchor-generate-cpi-interface",
-]
-
-[[package]]
-name = "anchor-generate-cpi-crate"
-version = "0.3.1"
-source = "git+https://github.com/clockwork-xyz/anchor-gen#cc4bad5720d770c627070b80427a38e1aedba18f"
-dependencies = [
- "anchor-idl",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "anchor-generate-cpi-interface"
-version = "0.3.1"
-source = "git+https://github.com/clockwork-xyz/anchor-gen#cc4bad5720d770c627070b80427a38e1aedba18f"
-dependencies = [
- "anchor-idl",
- "darling",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "anchor-idl"
-version = "0.3.1"
-source = "git+https://github.com/clockwork-xyz/anchor-gen#cc4bad5720d770c627070b80427a38e1aedba18f"
-dependencies = [
- "anchor-syn",
- "darling",
- "heck 0.4.1",
- "proc-macro2 1.0.54",
- "quote 1.0.26",
- "serde_json",
- "syn 1.0.109",
-]
-
-[[package]]
 name = "anchor-lang"
 version = "0.27.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1035,6 +993,52 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2850f2f5a82cbf437dd5af4d49848fbdfc27c157c3d010345776f952765261c5"
 dependencies = [
  "os_str_bytes",
+]
+
+[[package]]
+name = "clockwork-anchor-gen"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "36498ea59f8b698e3b50fd62f66f10d0cc45797e6688a9b83f90483da2df292e"
+dependencies = [
+ "clockwork-anchor-generate-cpi-crate",
+ "clockwork-anchor-generate-cpi-interface",
+]
+
+[[package]]
+name = "clockwork-anchor-generate-cpi-crate"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "156c8dbf1b3f491a75e24e1729304531ccbd22a29e4be4716bca24d850593200"
+dependencies = [
+ "clockwork-anchor-idl",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "clockwork-anchor-generate-cpi-interface"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "318e5289eea3e48dd21cec5a2bcd2866651a95ece8c818a0cc112dd7c29752e4"
+dependencies = [
+ "clockwork-anchor-idl",
+ "darling",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "clockwork-anchor-idl"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a1e8d90747ea00774abc57190337b31add9730a57ba1474f4f3fc57752370cd6"
+dependencies = [
+ "anchor-syn",
+ "darling",
+ "heck 0.4.1",
+ "proc-macro2 1.0.54",
+ "quote 1.0.26",
+ "serde_json",
+ "syn 1.0.109",
 ]
 
 [[package]]
@@ -2534,10 +2538,10 @@ dependencies = [
 
 [[package]]
 name = "mat-clockwork-thread-program-v1"
-version = "1.8.0"
+version = "1.9.0"
 dependencies = [
- "anchor-gen",
  "anchor-lang",
+ "clockwork-anchor-gen",
 ]
 
 [[package]]
