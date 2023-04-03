@@ -2,13 +2,16 @@
 
 set -e
 
-# Parse arguments
+if [[ $# -eq 0 ]]; then
+  echo "Usage: $0 <new_version> [--dry-run] [<cargo-set-version arguments>]"
+  exit 1
+fi
+
+new_version=$1
+shift
+
 while [[ $# -gt 0 ]]; do
   case $1 in
-  --bump)
-    shift
-    new_version=$1
-    ;;
   --dry-run)
     dry_run="--dry-run"
     ;;
@@ -29,13 +32,8 @@ if ! command -v cargo-set-version &>/dev/null; then
   cargo install cargo-edit
 fi
 
-# Update version in Cargo.toml files
-if [ -n "$new_version" ]; then
-  cargo set-version --locked --workspace --bump $new_version $dry_run "${args[@]}"
-else
-  echo "Usage: $0 -v|--version <new_version> [--dry-run] [<cargo-set-version arguments>]"
-fi
 
+cargo set-version --locked --workspace --bump $new_version $dry_run "${args[@]}"
 if [ -n "$dry_run" ]; then
  echo "Dry run, exiting..."
    exit 0
@@ -54,4 +52,4 @@ echo "$(git diff --stat | tail -n1)"
 git add .
 git commit -m "Bump from $current_version to $actual_version"
 git tag "v$actual_version"
-#git push && git push --tags
+git push && git push --tags
