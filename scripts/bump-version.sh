@@ -2,6 +2,19 @@
 
 set -e
 
+# Install cargo-edit if not already present
+if ! command -v cargo-set-version &>/dev/null; then
+  echo "cargo-edit not found, installing..."
+  cargo install cargo-edit
+fi
+
+# Install jq if not already present
+if ! command -v jq &>/dev/null; then
+  echo "jq not found, installing..."
+  sudo apt-get update
+  sudo apt-get install -y jq
+fi
+
 if [[ $# -eq 0 ]]; then
   echo "Usage: $0 <new_version> [--dry-run] [<cargo-set-version arguments>]"
   exit 1
@@ -26,13 +39,7 @@ done
 current_version=$(cat ./VERSION)
 echo "Current version: $current_version"
 
-# Install cargo-edit if not already present
-if ! command -v cargo-set-version &>/dev/null; then
-  echo "cargo-edit not found, installing..."
-  cargo install cargo-edit
-fi
-
-
+# Run cargo set-version
 cargo set-version --locked --workspace --bump $new_version $dry_run "${args[@]}"
 if [ -n "$dry_run" ]; then
  echo "Dry run, exiting..."
