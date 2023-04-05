@@ -39,14 +39,13 @@ jobs:
       - name: Grant permissions to build-all.sh
         run: chmod +x ./scripts/build-all.sh
 
-      # - name: Install libudev-dev
-      #   run: sudo apt-get install libudev-dev
-
       - name: Build release tarball
         run: ./scripts/ci/create-tarball.sh
 
       - name: Release
         uses: softprops/action-gh-release@v1
+        run:
+          echo "RUST_STABLE=$(rustc -V)" | tee -a $GITHUB_ENV
         if: startsWith(github.ref, 'refs/tags/')
         with:
           body: |
