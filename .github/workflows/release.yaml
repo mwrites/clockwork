@@ -25,7 +25,7 @@ jobs:
 
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: ${{ env.RUST_STABLE }}
+          toolchain: stable
           override: true
           profile: minimal
           components: rustfmt
