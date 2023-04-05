@@ -18,14 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set env vars
-        run: |
-          source scripts/ci/rust-version.sh
-          echo "RUST_STABLE=$rust_stable" | tee -a $GITHUB_ENV
-
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: ${{ env.RUST_STABLE }}
+          toolchain: stable
           override: true
           profile: minimal
           components: rustfmt
