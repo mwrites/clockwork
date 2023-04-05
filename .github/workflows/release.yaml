@@ -60,3 +60,11 @@ jobs:
             rust ${{ env.RUST_STABLE }}
           files: |
             clockwork-geyser-plugin-release-*
+
+      - name: Install cargo-publish-workspace-v2
+        uses: baptiste0928/cargo-install@v2
+        with:
+          crate: cargo-publish-workspace-v2
+
+      - name: Publish to crates.io
+        run: cargo publish-workspace --crate-prefix mat-clockwork
