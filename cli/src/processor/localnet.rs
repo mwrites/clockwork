@@ -1,25 +1,49 @@
 #[allow(deprecated)]
 use {
-    crate::{errors::CliError, parser::ProgramInfo},
+    crate::{
+        config::{
+            CliConfig,
+            GeyserPluginConfig,
+        },
+        errors::CliError,
+        parser::ProgramInfo,
+    },
     anyhow::Result,
     clockwork_client::{
         network::state::ConfigSettings,
-        thread::state::{Thread, Trigger},
+        thread::state::{
+            Thread,
+            Trigger,
+        },
         Client,
     },
     solana_sdk::{
         native_token::LAMPORTS_PER_SOL,
         program_pack::Pack,
         pubkey::Pubkey,
-        signature::{read_keypair_file, Keypair, Signer},
+        signature::{
+            read_keypair_file,
+            Keypair,
+            Signer,
+        },
         system_instruction,
     },
-    spl_associated_token_account::{create_associated_token_account, get_associated_token_address},
+    spl_associated_token_account::{
+        create_associated_token_account,
+        get_associated_token_address,
+    },
     spl_token::{
-        instruction::{initialize_mint, mint_to},
+        instruction::{
+            initialize_mint,
+            mint_to,
+        },
         state::Mint,
     },
-    std::process::{Child, Command},
+    std::fs,
+    std::process::{
+        Child,
+        Command,
+    },
 };
 
 pub fn start(
@@ -28,6 +52,9 @@ pub fn start(
     network_url: Option<String>,
     program_infos: Vec<ProgramInfo>,
 ) -> Result<(), CliError> {
+    // Create Geyser Plugin Config file
+    create_geyser_plugin_config()?;
+
     // Start the validator
     let validator_process =
         &mut start_test_validator(client, program_infos, network_url, clone_addresses)
@@ -101,12 +128,7 @@ fn mint_clockwork_token(client: &Client) -> Result<Pubkey> {
 
 fn register_worker(client: &Client) -> Result<()> {
     // Create the worker
-    let cfg = get_clockwork_config()?;
-    let keypath = format!(
-        "{}/lib/clockwork-worker-keypair.json",
-        cfg["home"].as_str().unwrap()
-    );
-    let signatory = read_keypair_file(keypath).unwrap();
+    let signatory = read_keypair_file(CliConfig::signatory_path()).unwrap();
     client.airdrop(&signatory.pubkey(), LAMPORTS_PER_SOL)?;
     super::worker::create(client, signatory, true)?;
 
@@ -176,6 +198,14 @@ fn create_threads(client: &Client, mint_pubkey: Pubkey) -> Result<()> {
     Ok(())
 }
 
+fn create_geyser_plugin_config() -> Result<(), CliError> {
+    let path = CliConfig::geyser_config_path();
+    let content = serde_json::to_string_pretty(&GeyserPluginConfig::default())
+        .map_err(|err| CliError::FailedLocalnet(err.to_string()))?;
+    fs::write(&path, content).map_err(|err| CliError::FailedLocalnet(err.to_string()))?;
+    Ok(())
+}
+
 fn start_test_validator(
     client: &Client,
     program_infos: Vec<ProgramInfo>,
@@ -184,20 +214,16 @@ fn start_test_validator(
 ) -> Result<Child> {
     println!("Starting test validator");
 
-    // Get Clockwork home path
-    let cfg = get_clockwork_config()?;
-    let home_dir = cfg["home"].as_str().unwrap();
-
     // TODO Build a custom plugin config
-    let mut process = Command::new("solana-test-validator")
+    let mut process = Command::new(CliConfig::runtime_path("solana-test-validator"))
         .arg("-r")
-        .bpf_program(home_dir, clockwork_client::network::ID, "network")
-        .bpf_program(home_dir, clockwork_client::thread::ID, "thread")
-        .bpf_program(home_dir, clockwork_client::webhook::ID, "webhook")
+        .bpf_program(clockwork_client::network::ID, "network")
+        .bpf_program(clockwork_client::thread::ID, "thread")
+        .bpf_program(clockwork_client::webhook::ID, "webhook")
         .network_url(network_url)
         .clone_addresses(clone_addresses)
         .add_programs_with_path(program_infos)
-        .geyser_plugin_config(home_dir)
+        .geyser_plugin_config()
         .spawn()
         .expect("Failed to start local test validator");
 
@@ -229,31 +255,10 @@ fn start_test_validator(
     Ok(process)
 }
 
-fn lib_path(home_dir: &str, filename: &str) -> String {
-    format!("{}/lib/{}", home_dir, filename)
-}
-
-fn get_clockwork_config() -> Result<serde_yaml::Value> {
-    let clockwork_config_path = dirs_next::home_dir()
-        .map(|mut path| {
-            path.extend(&[".config", "solana", "clockwork", "config.yml"]);
-            path.to_str().unwrap().to_string()
-        })
-        .unwrap();
-    let f = std::fs::File::open(clockwork_config_path)?;
-    let clockwork_config: serde_yaml::Value = serde_yaml::from_reader(f)?;
-    Ok(clockwork_config)
-}
-
 trait TestValidatorHelpers {
     fn add_programs_with_path(&mut self, program_infos: Vec<ProgramInfo>) -> &mut Command;
-    fn bpf_program(
-        &mut self,
-        home_dir: &str,
-        program_id: Pubkey,
-        program_name: &str,
-    ) -> &mut Command;
-    fn geyser_plugin_config(&mut self, home_dir: &str) -> &mut Command;
+    fn bpf_program(&mut self, program_id: Pubkey, program_name: &str) -> &mut Command;
+    fn geyser_plugin_config(&mut self) -> &mut Command;
     fn network_url(&mut self, url: Option<String>) -> &mut Command;
     fn clone_addresses(&mut self, clone_addresses: Vec<Pubkey>) -> &mut Command;
 }
@@ -268,21 +273,16 @@ impl TestValidatorHelpers for Command {
 
         self
     }
-    fn bpf_program(
-        &mut self,
-        home_dir: &str,
-        program_id: Pubkey,
-        program_name: &str,
-    ) -> &mut Command {
+    fn bpf_program(&mut self, program_id: Pubkey, program_name: &str) -> &mut Command {
         let filename = format!("clockwork_{}_program.so", program_name);
         self.arg("--bpf-program")
             .arg(program_id.to_string())
-            .arg(lib_path(home_dir, filename.as_str()))
+            .arg(CliConfig::runtime_path(filename.as_str()))
     }
 
-    fn geyser_plugin_config(&mut self, home_dir: &str) -> &mut Command {
+    fn geyser_plugin_config(&mut self) -> &mut Command {
         self.arg("--geyser-plugin-config")
-            .arg(lib_path(home_dir, "geyser-plugin-config.json"))
+            .arg(CliConfig::geyser_config_path())
     }
 
     fn network_url(&mut self, url: Option<String>) -> &mut Command {
