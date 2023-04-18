@@ -1,10 +1,7 @@
 #[allow(deprecated)]
 use {
     crate::{
-        config::{
-            CliConfig,
-            GeyserPluginConfig,
-        },
+        config::CliConfig,
         errors::CliError,
         parser::ProgramInfo,
     },
@@ -199,9 +196,14 @@ fn create_threads(client: &Client, mint_pubkey: Pubkey) -> Result<()> {
 }
 
 fn create_geyser_plugin_config() -> Result<(), CliError> {
-    let path = CliConfig::geyser_config_path();
-    let content = serde_json::to_string_pretty(&GeyserPluginConfig::default())
+    let config = clockwork_plugin::geyser_config::PluginConfig {
+        keypath: Some(CliConfig::signatory_path()),
+        libpath: Some(CliConfig::geyser_lib_path()),
+        ..Default::default()
+    };
+    let content = serde_json::to_string_pretty(&config)
         .map_err(|err| CliError::FailedLocalnet(err.to_string()))?;
+    let path = CliConfig::geyser_config_path();
     fs::write(&path, content).map_err(|err| CliError::FailedLocalnet(err.to_string()))?;
     Ok(())
 }

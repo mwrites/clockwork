@@ -1,3 +1,7 @@
+pub mod geyser_config {
+    pub use crate::config::PluginConfig;
+}
+
 use solana_geyser_plugin_interface::geyser_plugin_interface::GeyserPlugin;
 
 mod builders;

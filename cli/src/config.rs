@@ -1,5 +1,4 @@
 use {
-    serde::Serialize,
     solana_sdk::commitment_config::CommitmentConfig,
     std::{
         env,
@@ -107,33 +106,6 @@ impl CliConfig {
     //     let target_triplet = Self::detect_target_triplet();
     //     format!("clockwork-geyser-plugin-release-{}.tar.bz2", target_triplet)
     // }
-}
-
-// TODO: use from plugin crate instead
-static DEFAULT_TRANSACTION_TIMEOUT_THRESHOLD: u64 = 150;
-static DEFAULT_THREAD_COUNT: usize = 10;
-
-#[derive(Clone, Debug, Serialize)]
-pub struct GeyserPluginConfig {
-    pub keypath: String,
-    pub libpath: String,
-    pub thread_count: usize,
-    pub transaction_timeout_threshold: u64,
-    pub worker_id: u64,
-    pub sentry_url: Option<String>,
-}
-
-impl Default for GeyserPluginConfig {
-    fn default() -> Self {
-        Self {
-            libpath: CliConfig::geyser_lib_path(),
-            keypath: CliConfig::signatory_path(),
-            sentry_url: None,
-            transaction_timeout_threshold: DEFAULT_TRANSACTION_TIMEOUT_THRESHOLD,
-            thread_count: DEFAULT_THREAD_COUNT,
-            worker_id: 0,
-        }
-    }
 }
 
 //

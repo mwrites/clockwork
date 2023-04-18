@@ -1059,6 +1059,7 @@ dependencies = [
  "clap 3.2.23",
  "clockwork-client",
  "clockwork-cron",
+ "clockwork-plugin",
  "clockwork-relayer-api",
  "clockwork-utils",
  "clockwork-webhook-program",
@@ -1113,6 +1114,44 @@ dependencies = [
  "anchor-lang",
  "anchor-spl",
  "clockwork-utils",
+]
+
+[[package]]
+name = "clockwork-plugin"
+version = "2.0.15"
+dependencies = [
+ "anchor-lang",
+ "async-trait",
+ "async_once",
+ "bincode",
+ "bs58 0.4.0",
+ "bugsnag",
+ "cargo_toml",
+ "chrono",
+ "clockwork-client",
+ "clockwork-cron",
+ "clockwork-relayer-api",
+ "clockwork-thread-program",
+ "clockwork-thread-program-v1",
+ "clockwork-utils",
+ "futures",
+ "lazy_static",
+ "log 0.4.17",
+ "prost",
+ "reqwest",
+ "rustc_version",
+ "serde",
+ "serde_json",
+ "simple-error",
+ "solana-account-decoder",
+ "solana-client",
+ "solana-geyser-plugin-interface",
+ "solana-logger",
+ "solana-program",
+ "solana-sdk",
+ "solana-transaction-status",
+ "thiserror",
+ "tokio",
 ]
 
 [[package]]
@@ -1200,44 +1239,6 @@ dependencies = [
  "clockwork-network-program",
  "clockwork-utils",
  "serde",
-]
-
-[[package]]
-name = "clockwork_plugin"
-version = "2.0.15"
-dependencies = [
- "anchor-lang",
- "async-trait",
- "async_once",
- "bincode",
- "bs58 0.4.0",
- "bugsnag",
- "cargo_toml",
- "chrono",
- "clockwork-client",
- "clockwork-cron",
- "clockwork-relayer-api",
- "clockwork-thread-program",
- "clockwork-thread-program-v1",
- "clockwork-utils",
- "futures",
- "lazy_static",
- "log 0.4.17",
- "prost",
- "reqwest",
- "rustc_version",
- "serde",
- "serde_json",
- "simple-error",
- "solana-account-decoder",
- "solana-client",
- "solana-geyser-plugin-interface",
- "solana-logger",
- "solana-program",
- "solana-sdk",
- "solana-transaction-status",
- "thiserror",
- "tokio",
 ]
 
 [[package]]
