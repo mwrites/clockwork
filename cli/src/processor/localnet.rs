@@ -5,7 +5,10 @@ use {
         errors::CliError,
         parser::ProgramInfo,
     },
-    anyhow::Result,
+    anyhow::{
+        Context,
+        Result,
+    },
     clockwork_client::{
         network::state::ConfigSettings,
         thread::state::{
@@ -50,7 +53,7 @@ pub fn start(
     program_infos: Vec<ProgramInfo>,
 ) -> Result<(), CliError> {
     // Create Geyser Plugin Config file
-    create_geyser_plugin_config()?;
+    create_geyser_plugin_config().map_err(|err| CliError::FailedLocalnet(err.to_string()))?;
 
     // Start the validator
     let validator_process =
@@ -60,7 +63,8 @@ pub fn start(
     // Initialize Clockwork
     let mint_pubkey =
         mint_clockwork_token(client).map_err(|err| CliError::FailedTransaction(err.to_string()))?;
-    super::initialize::initialize(client, mint_pubkey)?;
+    super::initialize::initialize(client, mint_pubkey)
+        .map_err(|err| CliError::FailedTransaction(err.to_string()))?;
     register_worker(client).map_err(|err| CliError::FailedTransaction(err.to_string()))?;
     create_threads(client, mint_pubkey)
         .map_err(|err| CliError::FailedTransaction(err.to_string()))?;
@@ -118,20 +122,31 @@ fn mint_clockwork_token(client: &Client) -> Result<Pubkey> {
     ];
 
     // Submit tx
-    client.send_and_confirm(&ixs, &[client.payer(), &mint_keypair])?;
+    client
+        .send_and_confirm(&ixs, &[client.payer(), &mint_keypair])
+        .context("mint_clockwork_token failed")?;
 
     Ok(mint_keypair.pubkey())
 }
 
 fn register_worker(client: &Client) -> Result<()> {
     // Create the worker
-    let signatory = read_keypair_file(CliConfig::signatory_path()).unwrap();
-    client.airdrop(&signatory.pubkey(), LAMPORTS_PER_SOL)?;
-    super::worker::create(client, signatory, true)?;
+    let signatory = read_keypair_file(CliConfig::signatory_path()).map_err(|err| {
+        CliError::FailedLocalnet(format!(
+            "Unable to read keypair {}: {}",
+            CliConfig::signatory_path(),
+            err
+        ))
+    })?;
+
+    client
+        .airdrop(&signatory.pubkey(), LAMPORTS_PER_SOL)
+        .context("airdrop to signatory failed")?;
+    super::worker::create(client, signatory, true).context("worker::create failed")?;
 
     // Delegate stake to the worker
-    super::delegation::create(client, 0)?;
-    super::delegation::deposit(client, 100000000, 0, 0)?;
+    super::delegation::create(client, 0).context("delegation::create failed")?;
+    super::delegation::deposit(client, 100000000, 0, 0).context("delegation::deposit failed")?;
     Ok(())
 }
 
@@ -189,22 +204,30 @@ fn create_threads(client: &Client, mint_pubkey: Pubkey) -> Result<()> {
         },
     );
 
-    client.send_and_confirm(&vec![ix_a], &[client.payer()])?;
-    client.send_and_confirm(&vec![ix_b, ix_c], &[client.payer()])?;
+    client
+        .send_and_confirm(&vec![ix_a], &[client.payer()])
+        .context(format!(
+            "Failed to create thread: {} or update config",
+            epoch_thread_id,
+        ))?;
+    client
+        .send_and_confirm(&vec![ix_b, ix_c], &[client.payer()])
+        .context(format!("Failed to create thread: {}", hasher_thread_id))?;
 
     Ok(())
 }
 
-fn create_geyser_plugin_config() -> Result<(), CliError> {
+fn create_geyser_plugin_config() -> Result<()> {
     let config = clockwork_plugin::geyser_config::PluginConfig {
         keypath: Some(CliConfig::signatory_path()),
         libpath: Some(CliConfig::geyser_lib_path()),
         ..Default::default()
     };
+
     let content = serde_json::to_string_pretty(&config)
-        .map_err(|err| CliError::FailedLocalnet(err.to_string()))?;
+        .context("Unable to serialize PluginConfig to json")?;
     let path = CliConfig::geyser_config_path();
-    fs::write(&path, content).map_err(|err| CliError::FailedLocalnet(err.to_string()))?;
+    fs::write(&path, content).context(format!("Unable to serialize PluginConfig to {}", path))?;
     Ok(())
 }
 
@@ -216,18 +239,20 @@ fn start_test_validator(
 ) -> Result<Child> {
     println!("Starting test validator");
 
-    // TODO Build a custom plugin config
-    let mut process = Command::new(CliConfig::runtime_path("solana-test-validator"))
-        .arg("-r")
+    let path = CliConfig::runtime_path("solana-test-validator".clone()).clone();
+    let cmd = &mut Command::new(path);
+    cmd.arg("-r")
         .bpf_program(clockwork_client::network::ID, "network")
         .bpf_program(clockwork_client::thread::ID, "thread")
         .bpf_program(clockwork_client::webhook::ID, "webhook")
         .network_url(network_url)
         .clone_addresses(clone_addresses)
         .add_programs_with_path(program_infos)
-        .geyser_plugin_config()
+        .geyser_plugin_config();
+
+    let mut process = cmd
         .spawn()
-        .expect("Failed to start local test validator");
+        .context(format!("start validator command: {:#?}", cmd))?;
 
     // Wait for the validator to become healthy
     let ms_wait = 10_000;

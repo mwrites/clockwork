@@ -15,7 +15,7 @@ use {
 
 fn main() -> Result<(), CliError> {
     process(&app().get_matches()).map_err(|e| {
-        println!("{}", e);
+        eprintln!("{}", e);
         e
     })
 }
