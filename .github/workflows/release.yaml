@@ -53,6 +53,14 @@ jobs:
         with:
           crate: cargo-edit
           version: "0.11.9"
+
+      - name: Install Solana
+        run: |
+          curl -L https://github.com/solana-labs/solana/releases/download/v1.14.16/solana-release-x86_64-unknown-linux-gnu.tar.bz2 -o solana-release.tar.bz2
+          tar jxf solana-release.tar.bz2
+          cd solana-release/
+          export PATH=$PWD/bin:$PATH
+          solana-install init
       
       - name: Install anchor
         uses: baptiste0928/cargo-install@v2
