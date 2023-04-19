@@ -1,6 +1,6 @@
 [package]
-name = "clockwork-thread-program-v1"
-version = "1.4.4"
+name = "mat-clockwork-thread-program-v1"
+version = "5.9.0"
 edition = "2021"
 readme = "./README.md"
 description = "Clockwork thread program v1"

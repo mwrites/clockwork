@@ -64,9 +64,12 @@ pub enum CliCommand {
 
     // Localnet commands
     Localnet {
+        force_init: bool,
         clone_addresses: Vec<Pubkey>,
         network_url: Option<String>,
         program_infos: Vec<ProgramInfo>,
+        solana_archive: Option<String>,
+        clockwork_archive: Option<String>,
     },
 
     // Pool commands
@@ -376,6 +379,28 @@ pub fn app() -> Command<'static> {
                     .number_of_values(1)
                     .multiple(false)
                     .help("URL for Solana's JSON RPC or moniker (or their first letter): [mainnet-beta, testnet, devnet, localhost]")
+                )
+                .arg(Arg::with_name("force_init")
+                    .long("force-init")
+                    .help("Initializes and downloads localnet dependencies")
+                )
+                .arg(
+                Arg::with_name("solana_archive")
+                    .long("solana-archive")
+                    .help("url or local path to the solana archive containing the necessary \
+                     dependencies such as solana-test-validator. \
+                     Can be useful for debugging or testing different versions of solana-test-validator
+                     ")
+                    .takes_value(true),
+                )
+                .arg(
+                Arg::with_name("clockwork_archive")
+                    .long("clockwork-archive")
+                    .help("url or local path to the solana archive containing the necessary \
+                     dependencies such as clocwkork-thread-program, etc. \
+                     Can be useful for debugging or testing different versions of clockwork releases
+                     ")
+                    .takes_value(true),
                 )
         )
         .subcommand(

@@ -1,4 +1,6 @@
 use {
+    crate::deps::ToTagVersion,
+    clap::crate_version,
     solana_sdk::commitment_config::CommitmentConfig,
     std::{
         env,
@@ -11,16 +13,18 @@ pub const DEFAULT_RPC_TIMEOUT_SECONDS: Duration = Duration::from_secs(30);
 pub const DEFAULT_CONFIRM_TX_TIMEOUT_SECONDS: Duration = Duration::from_secs(5);
 pub const RELAYER_URL: &str = "http://localhost:8000/";
 pub const CLOCKWORK_RELEASE_BASE_URL: &str =
-    "http://localhost:8000/clockwork-xyz/clockwork/releases/download";
-// pub const CLOCKWORK_RELEASE_BASE_URL = "https://github.com/clockwork-xyz/clockwork/releases/download"
-pub const CLOCKWORK_ARCHIVE_PREFIX: &str = "clockwork-geyser-plugin-release/lib";
-pub const SOLANA_RELEASE_BASE_URL: &str =
-    "http://localhost:8000/solana-labs/solana/releases/download";
-// pub const SOLANA_RELEASE_BASE_URL = "https://github.com/solana-labs/solana/releases/download";
-pub const SOLANA_ARCHIVE_PREFIX: &str = "solana-release/bin";
+    "https://github.com/clockwork-xyz/clockwork/releases/download";
+pub const CLOCKWORK_DEPS: &[&str] = &[
+    "clockwork_network_program.so",
+    "clockwork_thread_program.so",
+    "clockwork_webhook_program.so",
+    "libclockwork_plugin.so",
+];
+pub const SOLANA_RELEASE_BASE_URL: &str = "https://github.com/solana-labs/solana/releases/download";
+pub const SOLANA_DEPS: &[&str] = &["solana-test-validator"];
 
 /// The combination of solana config file and our own config file
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CliConfig {
     pub json_rpc_url: String,
     pub websocket_url: String,
@@ -29,6 +33,8 @@ pub struct CliConfig {
     pub rpc_timeout: Duration,
     pub commitment: CommitmentConfig,
     pub confirm_transaction_initial_timeout: Duration,
+
+    pub active_version: String,
 }
 
 impl CliConfig {
@@ -43,6 +49,7 @@ impl CliConfig {
             rpc_timeout: DEFAULT_RPC_TIMEOUT_SECONDS,
             commitment: CommitmentConfig::confirmed(),
             confirm_transaction_initial_timeout: DEFAULT_CONFIRM_TX_TIMEOUT_SECONDS,
+            active_version: crate_version!().to_owned().to_tag_version(),
         }
     }
 
@@ -61,13 +68,17 @@ impl CliConfig {
         path
     }
 
-    pub fn runtime_path(filename: &str) -> String {
-        Self::default_runtime_dir().join(filename).to_string()
+    pub fn active_runtime_dir(&self) -> PathBuf {
+        Self::default_runtime_dir().join(&self.active_version)
+    }
+
+    pub fn active_runtime(&self, filename: &str) -> String {
+        self.active_runtime_dir().join(filename).to_string()
     }
 
     /// This assumes the path for the signatory keypair created by solana-test-validator
     /// is test-ledger/validator-keypair.json
-    pub fn signatory_path() -> String {
+    pub fn signatory(&self) -> String {
         env::current_dir()
             .map(|mut path| {
                 path.extend(["test-ledger", "validator-keypair.json"]);
@@ -79,12 +90,12 @@ impl CliConfig {
             .to_string()
     }
 
-    pub fn geyser_config_path() -> String {
-        Self::runtime_path("geyser-plugin-config.json")
+    pub fn geyser_config(&self) -> String {
+        self.active_runtime("geyser-plugin-config.json")
     }
 
-    pub fn geyser_lib_path() -> String {
-        Self::runtime_path("libclockwork_plugin.dylib")
+    pub fn geyser_lib(&self) -> String {
+        self.active_runtime("libclockwork_plugin.so")
     }
 }
 

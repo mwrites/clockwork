@@ -18,6 +18,8 @@ EOF
 defaultTargetTriple=$(cargo -vV | grep 'host:' | cut -d ' ' -f2)
 
 # Set build flags
+
+# Setup rust the default rust-version
 maybeRustVersion=
 installDir=
 buildVariant=debug
@@ -40,7 +42,7 @@ while [[ -n $1 ]]; do
         ;;
     esac
   elif [[ ${1:0:1} = + ]]; then
-    maybeRustVersion=$1
+    maybeRustVersion=${1:1}
     shift
   else
     installDir=$1
@@ -53,13 +55,19 @@ if [[ -z "$targetTriple" ]]; then
   targetTriple="$defaultTargetTriple"
 fi
 
+if [ -z "$maybeRustVersion" ]; then
+    source scripts/ci/rust-version.sh
+    maybeRustVersion="$rust_stable"
+else
+    rustup install "$maybeRustVersion"
+fi
+
 # Print final configuration
-echo "Using Rust version: ${maybeRustVersion:1}"
+echo "Using Rust version: $maybeRustVersion"
 echo "Build variant: $buildVariant"
 echo "Target triple: $targetTriple"
 echo "Install directory: $installDir"
 echo "Release flag: ${maybeReleaseFlag:---not-set}"
-
 
 # Check the install directory is provided
 if [[ -z "$installDir" ]]; then
@@ -68,7 +76,7 @@ if [[ -z "$installDir" ]]; then
 fi
 
 # Create the install directory
-installDir="$(mkdir -p "$installDir/$targetTriple"; cd "$installDir/$targetTriple"; pwd)"
+installDir="$(mkdir -p "$installDir"; cd "$installDir"; pwd)"
 mkdir -p "$installDir/lib"
 mkdir -p "$installDir/bin"
 echo "Install location: $installDir ($buildVariant)"
@@ -105,13 +113,23 @@ esac
 # Build the repo
 (
   set -x
-  cargo "$maybeRustVersion" build --locked $maybeReleaseFlag "${binArgs[@]}" --lib --target "$targetTriple"
+  cargo +"$maybeRustVersion" build --locked $maybeReleaseFlag "${binArgs[@]}" --lib --target "$targetTriple"
 
   # Copy binaries
-  cp -fv "target/$targetTriple/$buildVariant/$pluginFilename" "$installDir"/lib
+  case $targetTriple in
+    *darwin*)
+      pluginFilename=libclockwork_plugin.dylib
+      cp -fv "target/$targetTriple/$buildVariant/$pluginFilename" "$installDir"/lib
+      mv "$installDir"/lib/libclockwork_plugin.dylib "$installDir"/lib/libclockwork_plugin.so
+      ;;
+    *)
+      pluginFilename=libclockwork_plugin.so
+      cp -fv "target/$targetTriple/$buildVariant/$pluginFilename" "$installDir"/lib
+      ;;
+  esac
+
   for bin in "${BINS[@]}"; do
     rm -fv "$installDir/bin/$bin"
-
     cp -fv "target/$targetTriple/$buildVariant/$bin" "$installDir/bin"
   done
 
