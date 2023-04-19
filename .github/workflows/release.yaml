@@ -48,11 +48,11 @@ jobs:
           profile: minimal
           components: rustfmt
 
-      # - name: Install cargo-edit
-      #   uses: baptiste0928/cargo-install@v2
-      #   with:
-      #     crate: cargo-edit
-      #     version: "0.11.9"
+      - name: Install cargo-edit
+        uses: baptiste0928/cargo-install@v2
+        with:
+          crate: cargo-edit
+          version: "0.11.9"
 
       - name: Install Solana
         run: |
@@ -71,7 +71,7 @@ jobs:
 
       - name: Test Anchor
         run: |
-          solana -V
+          rustup toolchain list
           anchor build
 
       - name: Run version bump script
