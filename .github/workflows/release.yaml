@@ -35,10 +35,15 @@ jobs:
         with:
           packages: jq
 
+      - name: Set env vars
+        run: |
+          source scripts/ci/rust-version.sh
+          echo "PLUGIN_RUST_VERSION=$rust_stable" | tee -a $GITHUB_ENV
+
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ env.PLUGIN_RUST_VERSION }}
           override: true
           profile: minimal
           components: rustfmt
@@ -48,6 +53,12 @@ jobs:
         with:
           crate: cargo-edit
           version: "0.11.9"
+      
+      - name: Install anchor
+        uses: baptiste0928/cargo-install@v2
+        with:
+          crate: anchor-cli
+          args: --git https://github.com/coral-xyz/anchor --tag v0.27.0
 
       - name: Run version bump script
         run: |
@@ -59,6 +70,8 @@ jobs:
           RUST_BACKTRACE: full
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
       - name: Build
         run: cargo build --release --locked
 
@@ -67,11 +80,6 @@ jobs:
         with:
           message: Bump from ${{ env.OLD_VERSION }} to ${{ env.NEW_VERSION }}
           tag: v${{ env.NEW_VERSION }}
-
-      - name: Set env vars
-        run: |
-          source scripts/ci/rust-version.sh
-          echo "PLUGIN_RUST_VERSION=$rust_stable" | tee -a $GITHUB_ENV
 
       - name: Check Solana version
         run: |
