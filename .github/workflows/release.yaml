@@ -43,6 +43,12 @@ jobs:
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.PLUGIN_RUST_VERSION }}
+          override: true
+          profile: minimal
+          components: rustfmt
+          targets: x86_64-apple-darwin,x86_64-unknown-linux-gnu,aarch64-apple-darwin
 
       - name: Install cargo-edit
         uses: baptiste0928/cargo-install@v2
