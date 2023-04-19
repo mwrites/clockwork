@@ -64,8 +64,9 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           source ./scripts/ci/bump-version.sh ${{ github.event.inputs.bump }} ${{ github.event.inputs.extra_args }}
-          echo "OLD_VERSION=$old_version" | tee -a $GITHUB_ENV
-          echo "NEW_VERSION=$new_version" | tee -a $GITHUB_ENV
+          echo "OLD_VERSION=$old_version" >> $GITHUB_ENV
+          echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
+          echo "CI_TAG=v${{ $new_version }}" >> "$GITHUB_ENV" 
         env:
           RUST_BACKTRACE: full
 
@@ -75,24 +76,17 @@ jobs:
       - name: Build
         run: cargo build --release --locked
 
-      # - name: Commit and tag
-      #   uses: EndBug/add-and-commit@v9
-      #   with:
-      #     message: Bump from ${{ env.OLD_VERSION }} to ${{ env.NEW_VERSION }}
-      #     tag: v${{ env.NEW_VERSION }}
-
-      - name: Check Solana version
-        run: |
-          echo "CI_TAG=v${{ env.NEW_VERSION }}" >> "$GITHUB_ENV"
-          SOLANA_VERSION="$(./scripts/ci/solana-version.sh)"
-          SOLANA_VERSION="v${SOLANA_VERSION#=}"
-          echo "SOLANA_VERSION=$SOLANA_VERSION" >> "$GITHUB_ENV"
-
       - name: Grant permissions to create-tarball.sh
         run: chmod +x ./scripts/ci/create-tarball.sh
 
       - name: Grant permissions to build-all.sh
         run: chmod +x ./scripts/build-all.sh
+
+      # - name: Commit and tag
+      #   uses: EndBug/add-and-commit@v9
+      #   with:
+      #     message: Bump from ${{ env.OLD_VERSION }} to ${{ env.NEW_VERSION }}
+      #     tag: v${{ env.NEW_VERSION }}
 
       - name: Build release tarball for linux
         run: ./scripts/ci/create-tarball.sh x86_64-unknown-linux-gnu
