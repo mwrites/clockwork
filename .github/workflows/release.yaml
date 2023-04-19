@@ -60,6 +60,7 @@ jobs:
           tar jxf solana-release.tar.bz2
           cd solana-release/
           export PATH=$PWD/bin:$PATH
+          source ~/.bash_profile
           solana-install init 1.14.16
       
       - name: Install anchor
@@ -70,8 +71,6 @@ jobs:
 
       - name: Test Anchor
         run: |
-          export PATH="/home/runner/.local/share/solana/install/active_release/bin:$PATH"
-          source ~/.bash_profile
           rustup toolchain list
           anchor -V
           solana -V
