@@ -91,6 +91,11 @@ done
 if command -v anchor &> /dev/null; then
   set -x
   anchor build
+
+  # Copy program binaries into lib folder
+  cp -fv "target/deploy/clockwork_network_program.so" "$installDir"/lib
+  cp -fv "target/deploy/clockwork_thread_program.so" "$installDir"/lib
+  cp -fv "target/deploy/clockwork_webhook_program.so" "$installDir"/lib
 fi
 
 # Success message
