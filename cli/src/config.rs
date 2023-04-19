@@ -10,7 +10,14 @@ use {
 pub const DEFAULT_RPC_TIMEOUT_SECONDS: Duration = Duration::from_secs(30);
 pub const DEFAULT_CONFIRM_TX_TIMEOUT_SECONDS: Duration = Duration::from_secs(5);
 pub const RELAYER_URL: &str = "http://localhost:8000/";
-pub const RELEASE_BASE_URL: &str = "http://localhost:8000/";
+pub const CLOCKWORK_RELEASE_BASE_URL: &str =
+    "http://localhost:8000/clockwork-xyz/clockwork/releases/download";
+// pub const CLOCKWORK_RELEASE_BASE_URL = "https://github.com/clockwork-xyz/clockwork/releases/download"
+pub const CLOCKWORK_ARCHIVE_PREFIX: &str = "clockwork-geyser-plugin-release/lib";
+pub const SOLANA_RELEASE_BASE_URL: &str =
+    "http://localhost:8000/solana-labs/solana/releases/download";
+// pub const SOLANA_RELEASE_BASE_URL = "https://github.com/solana-labs/solana/releases/download";
+pub const SOLANA_ARCHIVE_PREFIX: &str = "solana-release/bin";
 
 /// The combination of solana config file and our own config file
 #[derive(Debug)]
@@ -91,6 +98,7 @@ impl PathToString for PathBuf {
     }
 }
 
+// Clockwork Deps Helpers
 impl CliConfig {
     // #[tokio::main]
     fn detect_target_triplet() -> String {
@@ -99,26 +107,31 @@ impl CliConfig {
         // return "x86_64-unknown-linux-gnu".to_string();
     }
 
-    pub fn localnet_release_archive_url() -> String {
-        let filename = Self::archive_filename();
-        format!("{}/{}", RELEASE_BASE_URL, &filename)
+    pub fn clockwork_release_url(tag: &str) -> String {
+        format!(
+            "{}/{}/{}",
+            CLOCKWORK_RELEASE_BASE_URL,
+            tag,
+            &Self::clockwork_release_archive()
+        )
     }
 
-    pub fn archive_filename() -> String {
+    pub fn clockwork_release_archive() -> String {
         let target_triplet = Self::detect_target_triplet();
         format!("clockwork-geyser-plugin-release-{}.tar.bz2", target_triplet)
     }
-}
 
-//
-// fn get_clockwork_config() -> Result<serde_yaml::Value> {
-//     let clockwork_config_path = dirs_next::home_dir()
-//         .map(|mut path| {
-//             path.extend(&[".config", "solana", "clockwork", "config.yml"]);
-//             path.to_str().unwrap().to_string()
-//         })
-//         .unwrap();
-//     let f = std::fs::File::open(clockwork_config_path)?;
-//     let clockwork_config: serde_yaml::Value = serde_yaml::from_reader(f)?;
-//     Ok(clockwork_config)
-// }
+    pub fn solana_release_url(tag: &str) -> String {
+        format!(
+            "{}/{}/{}",
+            SOLANA_RELEASE_BASE_URL,
+            tag,
+            &Self::solana_release_archive()
+        )
+    }
+
+    pub fn solana_release_archive() -> String {
+        let target_triplet = Self::detect_target_triplet();
+        format!("solana-release-{}.tar.bz2", target_triplet)
+    }
+}

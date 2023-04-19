@@ -53,7 +53,7 @@ pub fn start(
     network_url: Option<String>,
     program_infos: Vec<ProgramInfo>,
 ) -> Result<(), CliError> {
-    deps::download_and_extract(&CliConfig::default_runtime_dir())
+    deps::download_deps(&CliConfig::default_runtime_dir())
         .map_err(|err| CliError::FailedLocalnet(err.to_string()))?;
 
     // Create Geyser Plugin Config file
@@ -243,9 +243,8 @@ fn start_test_validator(
 ) -> Result<Child> {
     println!("Starting test validator");
 
-    // let path = CliConfig::runtime_path("solana-test-validator");
-    // let cmd = &mut Command::new(path);
-    let cmd = &mut Command::new("solana-test-validator");
+    let path = CliConfig::runtime_path("solana-test-validator");
+    let cmd = &mut Command::new(path);
     cmd.arg("-r")
         .bpf_program(clockwork_client::network::ID, "network")
         .bpf_program(clockwork_client::thread::ID, "thread")

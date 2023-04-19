@@ -1,5 +1,8 @@
 use {
-    crate::config::CliConfig,
+    crate::config::{
+        self,
+        CliConfig,
+    },
     anyhow::{
         Context,
         Result,
@@ -24,16 +27,39 @@ use {
     tar::Archive,
 };
 
-pub fn download_and_extract(runtime_dir: &Path) -> Result<()> {
-    let filename = CliConfig::archive_filename();
-    let dest_path = CliConfig::default_runtime_dir().join(filename);
-    download_file(&CliConfig::localnet_release_archive_url(), &dest_path)?;
-    extract_archive(&dest_path, runtime_dir)?;
-    Ok(())
+pub fn download_deps(runtime_dir: &Path) -> Result<()> {
+    let clockwork_tag = "v2.0.15";
+    let solana_tag = "v1.14.16";
+    download_and_extract(
+        runtime_dir,
+        &CliConfig::solana_release_url(solana_tag),
+        &CliConfig::default_runtime_dir().join(CliConfig::solana_release_archive()),
+        config::SOLANA_ARCHIVE_PREFIX,
+    )?;
+    download_and_extract(
+        runtime_dir,
+        &CliConfig::clockwork_release_url(clockwork_tag),
+        &CliConfig::default_runtime_dir().join(CliConfig::clockwork_release_archive()),
+        config::CLOCKWORK_ARCHIVE_PREFIX,
+    )
+}
+
+pub fn download_and_extract(
+    runtime_dir: &Path,
+    src_url: &str,
+    dest_path: &Path,
+    archive_prefix: &str,
+) -> Result<()> {
+    download_file(src_url, &dest_path)?;
+    extract_archive(&dest_path, runtime_dir, archive_prefix)
 }
 
 fn download_file(url: &str, dest: &Path) -> Result<()> {
+    println!("Downloading {}", url);
     let resp = get(url).context(format!("Failed to download file from {}", url))?;
+    if resp.status() != reqwest::StatusCode::OK {
+        return Err(anyhow::anyhow!("File not found at {}", url));
+    }
 
     let pb = ProgressBar::new(resp.content_length().unwrap_or(0));
     pb.set_style(ProgressStyle::default_bar()
@@ -49,14 +75,15 @@ fn download_file(url: &str, dest: &Path) -> Result<()> {
     Ok(())
 }
 
-fn extract_archive(archive_path: &Path, runtime_dir: &Path) -> Result<()> {
+fn extract_archive(archive_path: &Path, runtime_dir: &Path, strip_prefix: &str) -> Result<()> {
     // create runtime dir if necessary
     fs::create_dir_all(runtime_dir)?;
 
     let file =
         File::open(&archive_path).context(format!("Failed to open file {:#?}", archive_path))?;
     let mut archive = Archive::new(BzDecoder::new(file));
-    let prefix = "clockwork-geyser-plugin-release/lib";
+
+    // TODO: refactor to onyl extract specific files, and do not rely on prefix
 
     println!("Extracted the following files:");
     archive
@@ -65,8 +92,8 @@ fn extract_archive(archive_path: &Path, runtime_dir: &Path) -> Result<()> {
         .map(|mut entry| -> Result<PathBuf> {
             let path = entry
                 .path()?
-                .strip_prefix(prefix)
-                .context(format!("Failed to strip prefix {}", prefix))?
+                .strip_prefix(strip_prefix)
+                .context(format!("Failed to strip prefix {}", strip_prefix))?
                 .to_owned();
             let target_path = runtime_dir.join(&path);
             entry.unpack(&target_path).context(format!(
