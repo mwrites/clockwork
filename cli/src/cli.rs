@@ -1,10 +1,23 @@
-use crate::parser::ProgramInfo;
-use clap::{Arg, ArgGroup, Command};
-use clockwork_client::{
-    thread::state::{SerializableInstruction, Trigger},
-    webhook::state::HttpMethod,
+use {
+    crate::parser::ProgramInfo,
+    clap::{
+        crate_version,
+        Arg,
+        ArgGroup,
+        Command,
+    },
+    clockwork_client::{
+        thread::state::{
+            SerializableInstruction,
+            Trigger,
+        },
+        webhook::state::HttpMethod,
+    },
+    solana_sdk::{
+        pubkey::Pubkey,
+        signature::Keypair,
+    },
 };
-use solana_sdk::{pubkey::Pubkey, signature::Keypair};
 
 #[derive(Debug, PartialEq)]
 pub enum CliCommand {
@@ -148,7 +161,7 @@ pub fn app() -> Command<'static> {
     Command::new("Clockwork")
         .bin_name("clockwork")
         .about("An automation engine for the Solana blockchain")
-        .version(version!())
+        .version(crate_version!())
         .arg_required_else_help(true)
         .subcommand(
             Command::new("config")

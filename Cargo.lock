@@ -1101,7 +1101,6 @@ dependencies = [
  "spl-token",
  "tar",
  "thiserror",
- "version",
 ]
 
 [[package]]

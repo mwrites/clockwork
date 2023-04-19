@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate version;
-
 mod cli;
 mod config;
 mod deps;

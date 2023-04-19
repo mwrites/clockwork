@@ -8,6 +8,7 @@ use {
         Result,
     },
     bzip2::read::BzDecoder,
+    clap::crate_version,
     indicatif::{
         ProgressBar,
         ProgressStyle,
@@ -28,17 +29,18 @@ use {
 };
 
 pub fn download_deps(runtime_dir: &Path) -> Result<()> {
-    let clockwork_tag = "v2.0.15";
-    let solana_tag = "v1.14.16";
+    let solana_tag = env!("GEYSER_INTERFACE_VERSION").to_owned().to_tag_version();
+    let clockwork_tag = crate_version!().to_owned().to_tag_version();
+
     download_and_extract(
         runtime_dir,
-        &CliConfig::solana_release_url(solana_tag),
+        &CliConfig::solana_release_url(&solana_tag),
         &CliConfig::default_runtime_dir().join(CliConfig::solana_release_archive()),
         config::SOLANA_ARCHIVE_PREFIX,
     )?;
     download_and_extract(
         runtime_dir,
-        &CliConfig::clockwork_release_url(clockwork_tag),
+        &CliConfig::clockwork_release_url(&clockwork_tag),
         &CliConfig::default_runtime_dir().join(CliConfig::clockwork_release_archive()),
         config::CLOCKWORK_ARCHIVE_PREFIX,
     )
@@ -107,4 +109,18 @@ fn extract_archive(archive_path: &Path, runtime_dir: &Path, strip_prefix: &str) 
             println!("> {}", x.display());
         });
     Ok(())
+}
+
+trait ToTagVersion {
+    fn to_tag_version(&self) -> String;
+}
+
+impl ToTagVersion for String {
+    fn to_tag_version(&self) -> String {
+        if !self.starts_with("v") {
+            format!("v{}", self)
+        } else {
+            self.to_owned()
+        }
+    }
 }
