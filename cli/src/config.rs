@@ -102,9 +102,19 @@ impl PathToString for PathBuf {
 impl CliConfig {
     // #[tokio::main]
     fn detect_target_triplet() -> String {
-        return "aarch64-apple-darwin".to_owned();
-        //TODO: FIXME
-        // return "x86_64-unknown-linux-gnu".to_string();
+        let output = std::process::Command::new("cargo")
+            .arg("-vV")
+            .output()
+            .expect("failed to execute process");
+
+        let host_prefix = "host:";
+        String::from_utf8(output.stdout)
+            .expect("Unable to get output from cargo -vV")
+            .split('\n')
+            .find(|line| line.trim_start().to_lowercase().starts_with(&host_prefix))
+            .map(|line| line.trim_start_matches(&host_prefix).trim())
+            .expect("Unable to detect target 'host' from cargo -vV")
+            .to_owned()
     }
 
     pub fn clockwork_release_url(tag: &str) -> String {
