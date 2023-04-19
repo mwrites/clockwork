@@ -70,6 +70,8 @@ jobs:
 
       - name: Test Anchor
         run: |
+          export PATH="/home/runner/.local/share/solana/install/active_release/bin:$PATH"
+          source ~/.bash_profile
           rustup toolchain list
           anchor -V
           solana -V
