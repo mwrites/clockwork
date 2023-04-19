@@ -55,7 +55,7 @@ tokio = "1.18.4"
 futures = "0.3.26"
 
 [build-dependencies]
-cargo_toml = "0.13.0"
+cargo_metadata = "=0.14.0"
 rustc_version = "0.4.0"
 
 [package.metadata.docs.rs]

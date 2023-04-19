@@ -47,3 +47,4 @@ path = "src/main.rs"
 
 [build-dependencies]
 cargo_metadata = "=0.14.0"
+rustc_version = "0.4.0"
