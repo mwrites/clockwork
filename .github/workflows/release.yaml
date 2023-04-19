@@ -60,6 +60,7 @@ jobs:
           tar jxf solana-release.tar.bz2
           cd solana-release/
           echo "${PWD}/bin" >> $GITHUB_PATH
+          export PATH="${PWD}/bin:$PATH"
           solana-install init 1.14.16
       
       - name: Install anchor
