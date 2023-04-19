@@ -48,11 +48,11 @@ jobs:
           profile: minimal
           components: rustfmt
 
-      - name: Install cargo-edit
-        uses: baptiste0928/cargo-install@v2
-        with:
-          crate: cargo-edit
-          version: "0.11.9"
+      # - name: Install cargo-edit
+      #   uses: baptiste0928/cargo-install@v2
+      #   with:
+      #     crate: cargo-edit
+      #     version: "0.11.9"
 
       - name: Install Solana
         run: |
@@ -67,6 +67,13 @@ jobs:
         with:
           crate: anchor-cli
           args: --git https://github.com/coral-xyz/anchor --tag v0.27.0
+
+      - name: Test Anchor
+        run: |
+          rustup toolchain list
+          anchor -V
+          solana -V
+          anchor build
 
       - name: Run version bump script
         run: |
