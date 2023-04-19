@@ -68,7 +68,7 @@ if [[ -z "$installDir" ]]; then
 fi
 
 # Create the install directory
-installDir="$(mkdir -p "$installDir/$targetTriple"; cd "$installDir/$targetTriple"; pwd)"
+installDir="$(mkdir -p "$installDir"; cd "$installDir"; pwd)"
 mkdir -p "$installDir/lib"
 mkdir -p "$installDir/bin"
 echo "Install location: $installDir ($buildVariant)"
