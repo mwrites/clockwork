@@ -22,12 +22,6 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  # CARGO_CACHE_PATH: |
-  #   ~/.cargo/bin/
-  #   ~/.cargo/registry/index/
-  #   ~/.cargo/registry/cache/
-  #   ~/.cargo/git/db/
-  #   ./target/
   ANCHOR_VERSION: v0.27.0
 
 jobs:
@@ -133,9 +127,14 @@ jobs:
           chmod +x ./scripts/build-all.sh
           ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
 
+      - run: |
+          ls -l
+          ls -l bumped_source
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          working-directory: ./bumped_source
           name: ${{ env.CI_TAG }}
           tag_name: ${{ env.CI_TAG }}
           body: |
@@ -150,10 +149,12 @@ jobs:
       - bump
       - release
     runs-on: 'ubuntu-latest'
+    defaults:
+      run:
+        working-directory: ./bumped_source
     steps:
       - uses: actions/checkout@v3 
       - uses: actions/download-artifact@v3
-      - run: cd bumped_source
 
       - name: Install Rust Stable to use with tools
         uses: actions-rs/toolchain@v1
