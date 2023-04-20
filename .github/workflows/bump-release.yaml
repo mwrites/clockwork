@@ -72,6 +72,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3 
 
+      - uses: actions/download-artifact@v3
+      - run: cd bumped_source
+
       - name: Install core deps for mac if needed
         if: startsWith(matrix.os, 'mac')
         run: |
@@ -104,14 +107,11 @@ jobs:
           crate: anchor-cli
           args: --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }}
 
-      - uses: actions/download-artifact@v3
-      - run: cd bumped_source
-
       - name: Install Rust ${{ env.PLUGIN_RUST_VERSION }}
         uses: ./.github/actions/setup-rust/
 
       - name: Grant permissions to create-tarball.sh
-        run: chmod +x ./scripts/ci/create-tarball.sh
+        run: chmod +x ./scripts/ci/create-tarball.sh --target ${{ matrix.os }}
 
       - name: Grant permissions to build-all.sh
         run: chmod +x ./scripts/build-all.sh
