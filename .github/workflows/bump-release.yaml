@@ -109,6 +109,12 @@ jobs:
           profile: minimal
      
       - uses: ./.github/actions/setup-solana/
+
+      - run: |
+          solana -V
+          which cargo-build-bpf
+          echo $PATH
+
       - name: Install anchor
         uses: baptiste0928/cargo-install@v2
         with:
