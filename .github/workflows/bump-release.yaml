@@ -169,10 +169,7 @@ jobs:
         run: |
           echo "CI_TAG=v$(cat VERSION)" >> $GITHUB_ENV
 
-      - name: Install Rust ${{ env.PLUGIN_RUST_VERSION }}
-        uses: ./.github/actions/setup-rust/
-
       - name: Publish to crates.io
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
-        run: cargo publish-workspace --crate-prefix clockwork -- --dry-run --no-verify --allow-dirty
+        run: cargo publish-workspace --crate-prefix clockwork -- --locked --dry-run --allow-dirty
