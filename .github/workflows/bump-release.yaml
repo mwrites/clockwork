@@ -111,7 +111,7 @@ jobs:
       - uses: ./.github/actions/setup-solana/
 
       - run: |
-          which solana
+          echo $(which solana)
           # ls ~/.local/share/solana/install/active_release/bin
           # which cargo-build-bpf
           # echo $PATH
