@@ -29,7 +29,6 @@ runs:
           override: true
           profile: minimal
           components: rustfmt
-          targets: x86_64-apple-darwin,x86_64-unknown-linux-gnu,aarch64-apple-darwin
 
       # - uses: Swatinem/rust-cache@v2
       #   with:
