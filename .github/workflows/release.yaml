@@ -108,7 +108,7 @@ jobs:
       - name: Install core deps for mac if needed
         if: startsWith(matrix.os, 'mac')
         run: |
-          env HOMEBREW_NO_AUTO_UPDATE=1 brew install foo
+          env HOMEBREW_NO_AUTO_UPDATE=1 brew install jq
       - name: Install core deps
         if: startsWith(matrix.os, 'ubuntu')
         uses: awalsh128/cache-apt-pkgs-action@latest
