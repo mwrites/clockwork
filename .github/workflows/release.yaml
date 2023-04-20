@@ -65,6 +65,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: bump
+          path: ${{ github.workspace }}
 
   release:
     needs:
