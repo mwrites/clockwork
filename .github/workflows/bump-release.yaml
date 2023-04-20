@@ -137,7 +137,7 @@ jobs:
             clockwork-geyser-plugin ${{ env.CI_TAG }}
             solana ${{ env.SOLANA_VERSION }}
             rust ${{ env.PLUGIN_RUST_VERSION }}
-          # this gh action ignores the working directory, so we need explicitly mention the artefact path
+          # this gh action ignores the working directory, and defaults to the root of the repo
           files: |
             bumped_source/clockwork-geyser-plugin-release-*
 
@@ -175,4 +175,4 @@ jobs:
       - name: Publish to crates.io
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
-        run: cargo publish-workspace --crate-prefix clockwork -- --dry-run --no-verify
+        run: cargo publish-workspace --crate-prefix clockwork -- --dry-run --no-verify --allow-dirty
