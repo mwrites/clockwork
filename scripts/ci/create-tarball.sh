@@ -43,7 +43,7 @@ echo --- Creating release tarball
 
 (
 set -x
-cargo-build-bpf -V
+~/.local/share/solana/install/active_release/bin/cargo-build-bpf -V
 )
 
   source ./scripts/ci/rust-version.sh stable
