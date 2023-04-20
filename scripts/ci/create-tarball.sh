@@ -31,12 +31,11 @@ echo --- Creating release tarball
   rm -rf "${RELEASE_BASENAME:?}"/
   mkdir "${RELEASE_BASENAME}"/
 
-  # COMMIT="$(git rev-parse HEAD)"
-  (
-    echo "channel: $CI_TAG"
-    # echo "commit: $COMMIT"
-    echo "target: $TARGET"
-  ) > "${RELEASE_BASENAME}"/version.yml
+  cat > "${RELEASE_BASENAME}"/version.yml << EOL
+  channel: ${CI_TAG}
+  commit: ${COMMIT}
+  target: ${TARGET}
+EOL
 
   var=$(pwd)
   echo "The current working directory $var"
