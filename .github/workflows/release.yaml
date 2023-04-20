@@ -65,8 +65,9 @@ jobs:
       - name: Upload source with bumped version
         uses: actions/upload-artifact@v3
         with:
+          if-no-files-found: error
           name: bumped_source
-          path: ./*
+          path: ${{ github.workspace }}/**/*
 
   release:
     needs:
