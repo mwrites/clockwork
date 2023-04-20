@@ -112,7 +112,7 @@ jobs:
 
       - run: |
           solana -V
-          which solana -V
+          which solana
           ls ~/.local/share/solana/install/active_release/bin
           which cargo-build-bpf
           echo $PATH
