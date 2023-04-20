@@ -110,10 +110,6 @@ jobs:
      
       - uses: ./.github/actions/setup-solana/
 
-      - run: |
-          cargo-build-bpf
-        shell: bash
-
       - name: Install anchor
         uses: baptiste0928/cargo-install@v2
         with:
