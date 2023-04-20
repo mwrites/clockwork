@@ -107,30 +107,11 @@ jobs:
      
       - uses: ./.github/actions/setup-solana/
 
-      # - name: Install Anchor
-      #   run: |
-      #     cargo install --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }} anchor-cli --locked
-      #     anchor --version
-      #     rustup toolchain list
-
       - name: Install anchor
         uses: baptiste0928/cargo-install@v2
         with:
           crate: anchor-cli
           args: --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }}
-      # - name: Fix Anchor Path
-      #   run: |
-      #     mv ~/.cargo-install/anchor-cli/bin/* ~/.cargo/bin/
-      #     ls ~/.cargo/bin
-      #     anchor --version
-
-      - run: |
-          echo "~/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
-          export PATH=~/.local/share/solana/install/active_release/bin:$PATH
-          cargo-build-bpf -V
-          cargo-build-sbf -V
-          ls ~/.local/share/solana/install/active_release/bin
-        shell: bash
 
       - uses: actions/download-artifact@v3
       - run: cd bumped_source
