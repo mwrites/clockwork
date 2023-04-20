@@ -122,6 +122,12 @@ jobs:
           crate: anchor-cli
           args: --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }}
 
+      - run: |
+          echo "~/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+          export PATH=~/.local/share/solana/install/active_release/bin:$PATH
+          cargo build-bpf
+        shell: bash
+
       - uses: actions/download-artifact@v3
       - run: cd bumped_source
 
