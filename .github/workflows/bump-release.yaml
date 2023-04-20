@@ -31,31 +31,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3 
 
-      # - name: Install Rust Stable to use with tools
-      #   uses: actions-rs/toolchain@v1
-      #   with:
-      #     override: true
-      #     toolchain: stable
-      #     profile: minimal
+      - name: Install Rust Stable to use with tools
+        uses: actions-rs/toolchain@v1
+        with:
+          override: true
+          toolchain: stable
+          profile: minimal
 
-      # - name: Install cargo-edit
-      #   uses: baptiste0928/cargo-install@v2
-      #   with:
-      #     crate: cargo-edit
-      #     version: "0.11.9"
+      - name: Install cargo-edit
+        uses: baptiste0928/cargo-install@v2
+        with:
+          crate: cargo-edit
+          version: "0.11.9"
 
-      # - name: Run version bump script
-      #   run: |
-      #     cd ${{ github.workspace }}
-      #     source ./scripts/ci/bump-version.sh ${{ github.event.inputs.bump }} ${{ github.event.inputs.extra_args }}
-      #     # echo "OLD_VERSION=$old_version" >> old_version.txt
-      #     # echo "NEW_VERSION=$new_version" >> new_version.txt
-      #     # echo "CI_TAG=v$new_version" >> "$GITHUB_ENV
-      #     # echo "OLD_VERSION=$old_version" >> $GITHUB_ENV
-      #     # echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
-      #     # echo "CI_TAG=v$new_version" >> "$GITHUB_ENV" 
-      #   env:
-      #     RUST_BACKTRACE: full
+      - name: Run version bump script
+        run: |
+          source ./scripts/ci/bump-version.sh ${{ github.event.inputs.bump }} ${{ github.event.inputs.extra_args }}
 
       - name: Upload source with bumped version
         uses: actions/upload-artifact@v3
