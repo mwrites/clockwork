@@ -128,16 +128,7 @@ jobs:
       #     message: Bump from ${{ env.OLD_VERSION }} to ${{ env.NEW_VERSION }}
       #     tag: v${{ env.NEW_VERSION }}
 
-      - uses: actions/cache@v3
-        name: Cache Tarball Build
-        id: cache-anchor
-        with:
-          path: ${{ env.CARGO_CACHE_PATH }}
-          key: tarball-${{ runner.os }}-build-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            tarball-${{ runner.os }}-build-
-            tarball-${{ runner.os }}-
-
+      - uses: Swatinem/rust-cache@v2
       - name: Build release tarball
         run: ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
 
