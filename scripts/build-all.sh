@@ -95,7 +95,7 @@ done
 # Build programs
 (
   set -x
-  anchor build
+  anchor build -- --verbose
 )
 
 # Define lib extension
