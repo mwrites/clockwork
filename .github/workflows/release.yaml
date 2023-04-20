@@ -66,7 +66,7 @@ jobs:
         with:
           if-no-files-found: error
           name: bumped_source
-          path: ${{ github.workspace }}
+          path: ${{ github.workspace }}/artifacts
 
   release:
     needs:
@@ -84,18 +84,6 @@ jobs:
             target: x86_64-unknown-linux-gnu
     steps:
       - uses: actions/checkout@v3 
-
-      - uses: actions/download-artifact@v3
-      - run: |
-          echo $PWD
-          ls -l ..
-          ls -l
-          cd bumped_source
-
-      - uses: actions/download-artifact@v3
-      - run: |
-          ls
-          echo $PWD
 
       - name: Install core deps for mac if needed
         if: startsWith(matrix.os, 'mac')
@@ -131,7 +119,7 @@ jobs:
           args: --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }}
 
       - uses: actions/download-artifact@v3
-      - run: cd bumped_source
+      - run: cd artifacts/bumped_source
 
       - name: Env variables
         run: |
