@@ -1,0 +1,44 @@
+name: "Setup Rust"
+description: "Setup Rust"
+runs:
+  using: "composite"
+  steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: jq musl-tools
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: '${{ runner.os }}-cargo-registry-${{ hashFiles(''**/Cargo.lock'') }}'
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: '${{ runner.os }}-cargo-index-${{ hashFiles(''**/Cargo.lock'') }}'
+      - uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Get Rustc version
+        run: |
+          source scripts/ci/rust-version.sh
+          echo "PLUGIN_RUST_VERSION=$rust_stable" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.PLUGIN_RUST_VERSION }}
+          override: true
+          profile: minimal
+          components: rustfmt
+          targets: x86_64-apple-darwin,x86_64-unknown-linux-gnu,aarch64-apple-darwin
+
+      # - uses: Swatinem/rust-cache@v2
+      #   with:
+      #     cache-on-failure: true
+      #     shared-key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
