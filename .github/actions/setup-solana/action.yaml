@@ -3,9 +3,9 @@ description: "Setup Solana"
 runs:
   using: "composite"
   steps:
-    - uses: actions/cache@v3
-      name: Cache Solana Tool Suite
-      id: cache-solana
+    # - uses: actions/cache@v3
+    #   name: Cache Solana Tool Suite
+    #   id: cache-solana
       # with:
       #   path: |
       #     ~/.cache/solana/
