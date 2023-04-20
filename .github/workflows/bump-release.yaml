@@ -125,6 +125,8 @@ jobs:
       #     tag: v${{ env.NEW_VERSION }}
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          key: tarball-${{ runner.os }}-build-${{ hashFiles('**/Cargo.lock') }}
       - name: Build release tarball
         run: |
           chmod +x ./scripts/ci/create-tarball.sh
