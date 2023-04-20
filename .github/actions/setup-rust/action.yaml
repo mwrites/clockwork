@@ -1,3 +1,5 @@
+
+
 name: "Setup Rust"
 description: "Setup Rust"
 runs:
@@ -7,14 +9,8 @@ runs:
         uses: actions/cache@v3
         continue-on-error: true
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/            
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
+          path: ${{ env.CARGO_CACHE_PATH }}
+          key: cargo-${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Get Rustc version
         run: |
@@ -28,9 +24,3 @@ runs:
           toolchain: ${{ env.PLUGIN_RUST_VERSION }}
           override: true
           profile: minimal
-          components: rustfmt
-
-      # - uses: Swatinem/rust-cache@v2
-      #   with:
-      #     cache-on-failure: true
-      #     shared-key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}

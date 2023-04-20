@@ -22,6 +22,12 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  CARGO_CACHE_PATH: |
+    ~/.cargo/bin/
+    ~/.cargo/registry/index/
+    ~/.cargo/registry/cache/
+    ~/.cargo/git/db/
+    ./target/
   ANCHOR_VERSION: v0.27.0
 
 jobs:
@@ -121,6 +127,13 @@ jobs:
       #   with:
       #     message: Bump from ${{ env.OLD_VERSION }} to ${{ env.NEW_VERSION }}
       #     tag: v${{ env.NEW_VERSION }}
+
+      - uses: actions/cache@v3
+        name: Cache Tarball Build
+        id: cache-anchor
+        with:
+          path: ${{ env.CARGO_CACHE_PATH }}
+          key: cargo-${{ runner.os }}-anchor-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build release tarball
         run: ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
