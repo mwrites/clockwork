@@ -116,12 +116,6 @@ jobs:
       - name: Install Rust ${{ env.PLUGIN_RUST_VERSION }}
         uses: ./.github/actions/setup-rust/
 
-      - name: Grant permissions to create-tarball.sh
-        run: chmod +x ./scripts/ci/create-tarball.sh
-
-      - name: Grant permissions to build-all.sh
-        run: chmod +x ./scripts/build-all.sh
-
       # - name: Commit and tag
       #   uses: EndBug/add-and-commit@v9
       #   with:
@@ -130,7 +124,10 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
       - name: Build release tarball
-        run: ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
+        run: |
+          chmod +x ./scripts/ci/create-tarball.sh
+          chmod +x ./scripts/build-all.sh
+          ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
