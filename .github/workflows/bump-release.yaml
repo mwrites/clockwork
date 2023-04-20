@@ -86,8 +86,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            ~/Library/Caches/Homebrew/foo--*
-            ~/Library/Caches/Homebrew/downloads/*--foo-*
+            ~/Library/Caches/Homebrew/jq--*
+            ~/Library/Caches/Homebrew/downloads/*--jq-*
           key: brew-${{ hashFiles('.github/brew-formulae') }}
           restore-keys: brew-
       - name: Install core deps for mac if needed
