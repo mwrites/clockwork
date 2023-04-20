@@ -51,7 +51,4 @@ echo --- Creating release tarball
   cp -fv "${RELEASE_BASENAME}"/version.yml "$RELEASE_NAME".yml
 )
 
-# Make CHANNEL available to include in the software version information
-export CHANNEL
-
 echo --- ok
