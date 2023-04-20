@@ -133,7 +133,10 @@ jobs:
         id: cache-anchor
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
-          key: cargo-${{ runner.os }}-anchor-${{ hashFiles('**/Cargo.lock') }}
+          key: tarball-${{ runner.os }}-build-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            tarball-${{ runner.os }}-build-
+            tarball-${{ runner.os }}-
 
       - name: Build release tarball
         run: ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
