@@ -125,9 +125,9 @@ jobs:
       #     anchor --version
 
       - run: |
-          echo $PATH
+          echo $GITHUB_PATH
           ls ~/.local/share/solana/install/active_release/bin
-          # echo "~/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+          echo "~/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
           # export PATH=~/.local/share/solana/install/active_release/bin:$PATH
           cargo-build-bpf -V
           cargo-build-sbf -V
