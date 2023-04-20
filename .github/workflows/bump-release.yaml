@@ -124,15 +124,6 @@ jobs:
       #     ls ~/.cargo/bin
       #     anchor --version
 
-      - run: |
-          echo $GITHUB_PATH
-          ls ~/.local/share/solana/install/active_release/bin
-          echo "~/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
-          # export PATH=~/.local/share/solana/install/active_release/bin:$PATH
-          cargo-build-bpf -V
-          cargo-build-sbf -V
-        shell: bash
-
       - uses: actions/download-artifact@v3
       - run: cd bumped_source
 
