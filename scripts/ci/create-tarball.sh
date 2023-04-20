@@ -31,10 +31,10 @@ echo --- Creating release tarball
   rm -rf "${RELEASE_BASENAME:?}"/
   mkdir "${RELEASE_BASENAME}"/
 
-  COMMIT="$(git rev-parse HEAD)"
+  # COMMIT="$(git rev-parse HEAD)"
   (
     echo "channel: $CI_TAG"
-    echo "commit: $COMMIT"
+    # echo "commit: $COMMIT"
     echo "target: $TARGET"
   ) > "${RELEASE_BASENAME}"/version.yml
 
@@ -52,7 +52,7 @@ echo --- Creating release tarball
   cp "${RELEASE_BASENAME}"/version.yml "${TARBALL_BASENAME}-${TARGET}".yml
 )
 
-  # Make CHANNEL available to include in the software version information
-  export CHANNEL
+# Make CHANNEL available to include in the software version information
+export CHANNEL
 
 echo --- ok
