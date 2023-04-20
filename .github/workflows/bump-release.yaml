@@ -55,7 +55,7 @@ jobs:
           name: bumped_source
           path: ${{ github.workspace }}
 
-  release:
+  build-all:
     needs:
       - bump
     runs-on: '${{ matrix.os }}'
@@ -127,7 +127,32 @@ jobs:
           chmod +x ./scripts/build-all.sh
           ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
 
-      - name: Release
+      - name: Upload tarball
+        uses: actions/upload-artifact@v3
+        with:
+          if-no-files-found: error
+          name: release-build
+          path: ${{ github.workspace }}
+
+  release:
+    needs:
+      - build-all
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./release-build
+    steps:
+      - name: Env variables
+        run: |
+          chmod +x ./scripts/ci/solana-version.sh
+          echo "CI_TAG=v$(cat VERSION)" >> $GITHUB_ENV
+          SOLANA_VERSION="$(./scripts/ci/solana-version.sh)"
+          SOLANA_VERSION="v${SOLANA_VERSION#=}"
+          echo "SOLANA_VERSION=$SOLANA_VERSION" >> "$GITHUB_ENV"
+          cmod +x ./scripts/ci/rust-version.sh
+          source scripts/ci/rust-version.sh
+          echo "PLUGIN_RUST_VERSION=$rust_stable" >> $GITHUB_ENV
+      - name: Publish Github release
         uses: softprops/action-gh-release@v1
         with:
           fail_on_unmatched_files: true
@@ -139,12 +164,12 @@ jobs:
             rust ${{ env.PLUGIN_RUST_VERSION }}
           # this gh action ignores the working directory, and defaults to the root of the repo
           files: |
-            bumped_source/clockwork-geyser-plugin-release-*
+            release-build/clockwork-geyser-plugin-release-*
 
   publish-crate:
     needs:
       - bump
-      - release
+      - build-all
     runs-on: 'ubuntu-latest'
     defaults:
       run:
