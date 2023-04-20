@@ -128,8 +128,8 @@ jobs:
           ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
 
       - run: |
+          echo $PWD
           ls -l
-          ls -l bumped_source
 
       - name: Release
         uses: softprops/action-gh-release@v1

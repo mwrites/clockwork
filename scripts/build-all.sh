@@ -92,15 +92,14 @@ done
 )
 
 # Define lib extension
-pluginFilename=libclockwork_plugin.so
-# case $targetTriple in
-#   *darwin*)
-#     pluginFilename=libclockwork_plugin.dylib
-#     ;;
-#   *)
-#     pluginFilename=libclockwork_plugin.so
-#     ;;
-# esac
+case $targetTriple in
+  *darwin*)
+    pluginFilename=libclockwork_plugin.dylib
+    ;;
+  *)
+    pluginFilename=libclockwork_plugin.so
+    ;;
+esac
 
 # Build the repo
 (
@@ -108,10 +107,20 @@ pluginFilename=libclockwork_plugin.so
   cargo "$maybeRustVersion" build --locked $maybeReleaseFlag "${binArgs[@]}" --lib --target "$targetTriple"
 
   # Copy binaries
-  cp -fv "target/$targetTriple/$buildVariant/$pluginFilename" "$installDir"/lib
+  case $targetTriple in
+    *darwin*)
+      pluginFilename=libclockwork_plugin.dylib
+      cp -fv "target/$targetTriple/$buildVariant/$pluginFilename" "$installDir"/lib
+      mv "$installDir"/lib/libclockwork_plugin.dylib "$installDir"/lib/libclockwork_plugin.so
+      ;;
+    *)
+      pluginFilename=libclockwork_plugin.so
+      cp -fv "target/$targetTriple/$buildVariant/$pluginFilename" "$installDir"/lib
+      ;;
+  esac
+
   for bin in "${BINS[@]}"; do
     rm -fv "$installDir/bin/$bin"
-
     cp -fv "target/$targetTriple/$buildVariant/$bin" "$installDir/bin"
   done
 
