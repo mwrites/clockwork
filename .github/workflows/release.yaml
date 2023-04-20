@@ -82,9 +82,14 @@ jobs:
             target: x86_64-unknown-linux-gnu
     steps:
       - uses: actions/checkout@v3 
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: jq 
+
+      - name: Install core deps
+        if: startsWith(matrix.os, 'macos')
+        run: brew install jq
+      - name: Install core deps
+        if: startsWith(matrix.os,'ubuntu')
+        run: apt get install jq
+
       - uses: ./.github/actions/setup-rust/
       - uses: ./.github/actions/setup-solana/
       - name: Install anchor
