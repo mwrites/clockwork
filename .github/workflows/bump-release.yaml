@@ -111,7 +111,7 @@ jobs:
         uses: ./.github/actions/setup-rust/
 
       - name: Grant permissions to create-tarball.sh
-        run: chmod +x ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
+        run: chmod +x ./scripts/ci/create-tarball.sh
 
       - name: Grant permissions to build-all.sh
         run: chmod +x ./scripts/build-all.sh
@@ -123,7 +123,7 @@ jobs:
       #     tag: v${{ env.NEW_VERSION }}
 
       - name: Build release tarball
-        run: ./scripts/ci/create-tarball.sh
+        run: ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
