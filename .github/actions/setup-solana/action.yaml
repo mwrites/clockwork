@@ -20,11 +20,13 @@ runs:
         retry_on: error
         shell: bash
         command: sh -c "$(curl -sSfL https://release.solana.com/v${{ env.SOLANA_CLI_VERSION }}/install)"
+    - run: echo "/home/runner/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+      shell: bash
     - run: |
+        ls -l ..
+        ls -l
         echo $PWD
         solana -V
-      shell: bash
-    - run: echo "/home/runner/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
       shell: bash
     - run: solana-keygen new --no-bip39-passphrase
       shell: bash
