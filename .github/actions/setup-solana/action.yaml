@@ -6,11 +6,11 @@ runs:
     - uses: actions/cache@v3
       name: Cache Solana Tool Suite
       id: cache-solana
-      with:
-        path: |
-          ~/.cache/solana/
-          ~/.local/share/solana/
-        key: solana-${{ runner.os }}-v0000-${{ env.SOLANA_VERSION }}
+      # with:
+      #   path: |
+      #     ~/.cache/solana/
+      #     ~/.local/share/solana/
+      #   key: solana-${{ runner.os }}-v0000-${{ env.SOLANA_VERSION }}
     - uses: nick-fields/retry@v2
       if: steps.cache-solana.outputs.cache-hit != 'true'
       with:
