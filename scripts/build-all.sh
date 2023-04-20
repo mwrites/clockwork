@@ -61,9 +61,10 @@ echo "Install directory: $installDir"
 echo "Release flag: ${maybeReleaseFlag:---not-set}"
 
 set -x
-which cargo-build-bpf
+command -v cargo-build-bpf
 cargo-build-bpf -V
-which anchor
+command -v anchor
+anchor -V
 rustup toolchain list
 
 # Check the install directory is provided
