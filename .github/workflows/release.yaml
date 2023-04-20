@@ -72,6 +72,7 @@ jobs:
       - bump
     runs-on: '${{ matrix.os }}'
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: macos-latest
