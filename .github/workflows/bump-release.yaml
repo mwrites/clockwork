@@ -118,7 +118,7 @@ jobs:
 
       - name: Install Anchor
         run: |
-          cargo install --git https://github.com/coral-xyz/anchor --tag {{ env.ANCHOR_VERSION }} anchor-cli --locked
+          cargo install --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }} anchor-cli --locked
           anchor --version
           rustup toolchain list
 
