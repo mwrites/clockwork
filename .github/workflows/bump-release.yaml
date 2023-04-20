@@ -116,6 +116,7 @@ jobs:
           ls ~/.local/share/solana/install/active_release/bin
           which cargo-build-bpf
           echo $PATH
+          solana-install info
 
       - name: Install anchor
         uses: baptiste0928/cargo-install@v2
