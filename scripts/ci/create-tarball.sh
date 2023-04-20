@@ -44,7 +44,7 @@ echo --- Creating release tarball
   source ./scripts/ci/rust-version.sh stable
   ./scripts/build-all.sh +"${rust_stable:?}" --target "$TARGET" "${RELEASE_BASENAME}-${TARGET}"
 
-  mv "${RELEASE_BASENAME}-${TARGET}" "${RELEASE_BASENAME}"
+  mv "${RELEASE_BASENAME}-${TARGET}"/* "${RELEASE_BASENAME}/"
   tar cvf "${TARBALL_BASENAME}".tar "${RELEASE_BASENAME}"
   bzip2 -f "${TARBALL_BASENAME}".tar
   cp "${RELEASE_BASENAME}"/version.yml "${TARBALL_BASENAME}-${TARGET}".yml
