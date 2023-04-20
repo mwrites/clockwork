@@ -118,11 +118,11 @@ jobs:
         with:
           crate: anchor-cli
           args: --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }}
-      - name: Fix Anchor Path
-        run: |
-          mv ~/.cargo-install/anchor-cli/bin/* ~/.cargo/bin/
-          ls ~/.cargo/bin
-          anchor --version
+      # - name: Fix Anchor Path
+      #   run: |
+      #     mv ~/.cargo-install/anchor-cli/bin/* ~/.cargo/bin/
+      #     ls ~/.cargo/bin
+      #     anchor --version
 
       - run: |
           echo "~/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
