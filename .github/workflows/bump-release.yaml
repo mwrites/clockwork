@@ -112,11 +112,10 @@ jobs:
 
       - run: |
           solana-install info
-          which solana
-          # ls ~/.local/share/solana/install/active_release/bin
-          # which cargo-build-bpf
-          # echo $PATH
-          # solana-install info
+          ~/.local/share/solana/install/active_release/bin/solana -V
+          solana
+          which cargo-build-bpf
+          echo $PATH
         shell: bash
 
       - name: Install anchor
