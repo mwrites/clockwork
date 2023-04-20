@@ -134,7 +134,7 @@ jobs:
         with:
           if-no-files-found: error
           name: release-build
-          path: ${{ github.workspace }}
+          path: clockwork-geyser-plugin-release-*
 
   release:
     needs:
