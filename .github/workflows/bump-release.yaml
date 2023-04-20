@@ -111,11 +111,7 @@ jobs:
       - uses: ./.github/actions/setup-solana/
 
       - run: |
-          solana-install info
-          ~/.local/share/solana/install/active_release/bin/solana -V
-          solana
-          which cargo-build-bpf
-          echo $PATH
+          cargo-build-bpf
         shell: bash
 
       - name: Install anchor
