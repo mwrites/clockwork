@@ -65,8 +65,8 @@ jobs:
       - name: Upload source with bumped version
         uses: actions/upload-artifact@v3
         with:
-          name: bump
-          path: ${{ github.workspace }}
+          name: bumped_source
+          path: ./*
 
   release:
     needs:
@@ -84,18 +84,6 @@ jobs:
             target: x86_64-unknown-linux-gnu
     steps:
       - uses: actions/checkout@v3 
-
-    # - name: Configure Homebrew cache
-    #   uses: actions/cache@v2
-    #   with:
-    #     path: |
-    #       ~/Library/Caches/Homebrew/foo--*
-    #       ~/Library/Caches/Homebrew/downloads/*--foo-*
-    #     key: brew-${{ hashFiles('.github/brew-formulae') }}
-    #     restore-keys: brew-
-    # - name: Install Homebrew dependencies
-    #   run: |
-    #     env HOMEBREW_NO_AUTO_UPDATE=1 brew install foo
 
       - name: Install core deps for mac if needed
         if: startsWith(matrix.os, 'mac')
@@ -122,7 +110,6 @@ jobs:
           toolchain: stable
           override: true
           profile: minimal
-
      
       - uses: ./.github/actions/setup-solana/
       - name: Install anchor
@@ -132,7 +119,7 @@ jobs:
           args: --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }}
 
       - uses: actions/download-artifact@v3
-      - run: cd bump
+      - run: cd bumped_source
 
       - name: Env variables
         run: |
