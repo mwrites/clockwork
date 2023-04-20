@@ -58,16 +58,12 @@ jobs:
       #   env:
       #     RUST_BACKTRACE: full
 
-      # - shell: bash
-      #   run: |
-      #     expr 3 + 7 > math-homework.txt
-      - run: mkdir artifcats
       - name: Upload source with bumped version
         uses: actions/upload-artifact@v3
         with:
           if-no-files-found: error
           name: bumped_source
-          path: artifcats
+          path: ${{ github.workspace }}
 
   release:
     needs:
@@ -120,7 +116,7 @@ jobs:
           args: --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }}
 
       - uses: actions/download-artifact@v3
-      - run: cd artifacts/bumped_source
+      - run: cd bumped_source
 
       - name: Env variables
         run: |
