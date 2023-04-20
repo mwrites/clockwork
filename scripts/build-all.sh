@@ -60,8 +60,8 @@ echo "Target triple: $targetTriple"
 echo "Install directory: $installDir"
 echo "Release flag: ${maybeReleaseFlag:---not-set}"
 
+set -x
 echo "$PATH"
-~/.local/share/solana/install/active_release/bin/cargo-build-bpf -V
 which cargo-builf-bpf
 which anchor
 rustup toolchain list
