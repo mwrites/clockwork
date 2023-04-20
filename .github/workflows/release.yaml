@@ -61,12 +61,13 @@ jobs:
       # - shell: bash
       #   run: |
       #     expr 3 + 7 > math-homework.txt
+      - run: mkdir artifcats
       - name: Upload source with bumped version
         uses: actions/upload-artifact@v3
         with:
           if-no-files-found: error
           name: bumped_source
-          path: ${{ github.workspace }}/artifacts
+          path: artifcats
 
   release:
     needs:
