@@ -61,8 +61,9 @@ echo "Install directory: $installDir"
 echo "Release flag: ${maybeReleaseFlag:---not-set}"
 
 set -x
-export PATH=~/.local/share/solana/install/active_release/bin:$PATH
-ls ~/.local/share/solana/install/active_release/bin
+echo $PATH
+# export PATH=~/.local/share/solana/install/active_release/bin:$PATH
+# ls ~/.local/share/solana/install/active_release/bin
 command -v cargo-build-bpf
 cargo-build-bpf -V
 command -v cargo-build-sbf
