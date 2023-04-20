@@ -30,8 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Bump version and release
     steps:
-      # - uses: actions/checkout@v3 
-      # - uses: ./.github/actions/setup-rust/
+      - uses: actions/checkout@v3 
+      - uses: ./.github/actions/setup-rust/
 
       - name: Install Rust Stable to use with tools
         uses: actions-rs/toolchain@v1
