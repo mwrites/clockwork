@@ -27,6 +27,7 @@ runs:
         ls -l
         echo $PWD
         solana -V
+        /home/runner/.local/share/solana/install/active_release/bin/solana -V
       shell: bash
     - run: solana-keygen new --no-bip39-passphrase
       shell: bash
