@@ -90,10 +90,12 @@ jobs:
         run: |
           chmod +x ./scripts/ci/solana-version.sh
           echo "CI_TAG=v$(cat VERSION)" >> $GITHUB_ENV
+          echo "OLD_VERSION=$old_version" >> $GITHUB_ENV
+          echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
           SOLANA_VERSION="$(./scripts/ci/solana-version.sh)"
           SOLANA_VERSION="v${SOLANA_VERSION#=}"
           echo "SOLANA_VERSION=$SOLANA_VERSION" >> "$GITHUB_ENV"
-
+          
       - name: Install Rust Stable to use with tools
         uses: actions-rs/toolchain@v1
         with:
