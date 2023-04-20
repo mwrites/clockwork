@@ -111,7 +111,7 @@ jobs:
         uses: ./.github/actions/setup-rust/
 
       - name: Grant permissions to create-tarball.sh
-        run: chmod +x ./scripts/ci/create-tarball.sh --target ${{ matrix.os }}
+        run: chmod +x ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
 
       - name: Grant permissions to build-all.sh
         run: chmod +x ./scripts/build-all.sh
