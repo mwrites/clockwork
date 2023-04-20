@@ -60,12 +60,11 @@ echo "Target triple: $targetTriple"
 echo "Install directory: $installDir"
 echo "Release flag: ${maybeReleaseFlag:---not-set}"
 
-(
-set -x
 echo "$PATH"
 ~/.local/share/solana/install/active_release/bin/cargo-build-bpf -V
-echo "$(which cargo-builf-bpf)"
-)
+which cargo-builf-bpf
+which anchor
+rustup toolchain list
 
 # Check the install directory is provided
 if [[ -z "$installDir" ]]; then
