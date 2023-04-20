@@ -127,22 +127,19 @@ jobs:
           chmod +x ./scripts/build-all.sh
           ./scripts/ci/create-tarball.sh --target ${{ matrix.target }}
 
-      - run: |
-          echo $PWD
-          ls -l
-
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          working-directory: ./bumped_source
+          fail_on_unmatched_files: true
           name: ${{ env.CI_TAG }}
           tag_name: ${{ env.CI_TAG }}
           body: |
             clockwork-geyser-plugin ${{ env.CI_TAG }}
             solana ${{ env.SOLANA_VERSION }}
             rust ${{ env.PLUGIN_RUST_VERSION }}
+          # this gh action ignores the working directory, so we need explicitly mention the artefact path
           files: |
-            clockwork-geyser-plugin-release-*
+            bumped_source/clockwork-geyser-plugin-release-*
 
   publish-crate:
     needs:
