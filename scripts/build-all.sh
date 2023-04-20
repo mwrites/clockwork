@@ -61,8 +61,8 @@ echo "Install directory: $installDir"
 echo "Release flag: ${maybeReleaseFlag:---not-set}"
 
 set -x
-echo "$PATH"
-which cargo-builf-bpf
+which cargo-build-bpf
+cargo-build-bpf -V
 which anchor
 rustup toolchain list
 
