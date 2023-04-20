@@ -134,7 +134,7 @@ jobs:
         with:
           if-no-files-found: error
           name: release-build
-          path: clockwork-geyser-plugin-release-*
+          path: bumped_source/clockwork-geyser-plugin-release-*
 
   release:
     needs:
