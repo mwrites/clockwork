@@ -22,7 +22,6 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  SOLANA_VERSION: 1.14.16
   ANCHOR_VERSION: v0.27.0
 
 jobs:
@@ -101,6 +100,13 @@ jobs:
         with:
           packages: jq
 
+      - name: Env variables
+        run: |
+          echo "CI_TAG=$(cat VERSION)" >> $GITHUB_ENV
+          SOLANA_VERSION="$(./scripts/ci/solana-version.sh)"
+          SOLANA_VERSION="v${SOLANA_VERSION#=}"
+          echo "SOLANA_VERSION=$SOLANA_VERSION" >> "$GITHUB_ENV"
+
       - name: Install Rust Stable to use with tools
         uses: actions-rs/toolchain@v1
         with:
@@ -118,13 +124,6 @@ jobs:
 
       - uses: actions/download-artifact@v3
       - run: cd bumped_source
-
-      - name: Env variables
-        run: |
-          echo "CI_TAG=$(cat VERSION)" >> $GITHUB_ENV
-          SOLANA_VERSION="$(./scripts/ci/solana-version.sh)"
-          SOLANA_VERSION="v${SOLANA_VERSION#=}"
-          echo "SOLANA_VERSION=$SOLANA_VERSION" >> "$GITHUB_ENV"
 
       - name: Install Rust ${{ env.PLUGIN_RUST_VERSION }}
         uses: ./.github/actions/setup-rust/
