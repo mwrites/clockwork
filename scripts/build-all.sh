@@ -92,14 +92,15 @@ done
 )
 
 # Define lib extension
-case $targetTriple in
-  *darwin*)
-    pluginFilename=libclockwork_plugin.dylib
-    ;;
-  *)
-    pluginFilename=libclockwork_plugin.so
-    ;;
-esac
+pluginFilename=libclockwork_plugin.so
+# case $targetTriple in
+#   *darwin*)
+#     pluginFilename=libclockwork_plugin.dylib
+#     ;;
+#   *)
+#     pluginFilename=libclockwork_plugin.so
+#     ;;
+# esac
 
 # Build the repo
 (
