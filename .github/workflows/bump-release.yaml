@@ -128,6 +128,8 @@ jobs:
           echo "~/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
           export PATH=~/.local/share/solana/install/active_release/bin:$PATH
           cargo-build-bpf -V
+          cargo-build-sbf -V
+          ls ~/.local/share/solana/install/active_release/bin
         shell: bash
 
       - uses: actions/download-artifact@v3
