@@ -26,3 +26,5 @@ runs:
       shell: bash
     - run: solana config set --url localhost
       shell: bash
+    - run: solana-install init ${{ env.SOLANA_VERSION }}
+      shell: bash
