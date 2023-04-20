@@ -50,11 +50,6 @@ jobs:
           components: rustfmt
           targets: x86_64-apple-darwin,x86_64-unknown-linux-gnu,aarch64-apple-darwin
 
-      - uses: Swatinem/rust-cache@v2
-        with:
-          cache-on-failure: true
-          shared-key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
       - name: Install cargo-edit
         uses: baptiste0928/cargo-install@v2
         with:
@@ -62,15 +57,6 @@ jobs:
           version: "0.11.9"
 
       - uses: ./.github/actions/setup-solana/
-
-      # - name: Install Solana
-      #   run: |
-      #     curl -L https://github.com/solana-labs/solana/releases/download/v1.14.16/solana-release-x86_64-unknown-linux-gnu.tar.bz2 -o solana-release.tar.bz2
-      #     tar jxf solana-release.tar.bz2
-      #     cd solana-release/
-      #     echo "${PWD}/bin" >> $GITHUB_PATH
-      #     export PATH="${PWD}/bin:$PATH"
-      #     solana-install init 1.14.16
       
       - name: Install anchor
         uses: baptiste0928/cargo-install@v2
@@ -81,7 +67,6 @@ jobs:
       - name: Test Anchor
         run: |
           rustup toolchain list
-          anchor build
 
       - name: Run version bump script
         run: |
@@ -92,6 +77,11 @@ jobs:
           echo "CI_TAG=v$new_version" >> "$GITHUB_ENV" 
         env:
           RUST_BACKTRACE: full
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          shared-key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Grant permissions to create-tarball.sh
         run: chmod +x ./scripts/ci/create-tarball.sh
