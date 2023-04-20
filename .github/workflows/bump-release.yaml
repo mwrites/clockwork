@@ -142,6 +142,9 @@ jobs:
       run:
         working-directory: ./release-build
     steps:
+      - uses: actions/checkout@v3 
+      - uses: actions/download-artifact@v3
+
       - name: Env variables
         run: |
           chmod +x ./scripts/ci/solana-version.sh
@@ -152,6 +155,7 @@ jobs:
           cmod +x ./scripts/ci/rust-version.sh
           source scripts/ci/rust-version.sh
           echo "PLUGIN_RUST_VERSION=$rust_stable" >> $GITHUB_ENV
+          
       - name: Publish Github release
         uses: softprops/action-gh-release@v1
         with:
