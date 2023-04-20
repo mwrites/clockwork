@@ -31,11 +31,12 @@ echo --- Creating release tarball
   rm -rf "${RELEASE_BASENAME:?}"/
   mkdir "${RELEASE_BASENAME}"/
 
-  cat > "${RELEASE_BASENAME}"/version.yml << EOL
-  channel: ${CI_TAG}
-  commit: ${COMMIT}
-  target: ${TARGET}
-EOL
+  COMMIT="$(git rev-parse HEAD)"
+  (
+    echo "channel: $CI_TAG"
+    echo "commit: $COMMIT"
+    echo "target: $TARGET"
+  ) > "${RELEASE_BASENAME}"/version.yml
 
   var=$(pwd)
   echo "The current working directory $var"
@@ -43,12 +44,11 @@ EOL
   source ./scripts/ci/rust-version.sh stable
   ./scripts/build-all.sh +"${rust_stable:?}" --release --target "$TARGET" "${RELEASE_BASENAME}-${TARGET}"
 
-  rm -rf "${RELEASE_BASENAME}"
   mv "${RELEASE_BASENAME}-${TARGET}" "${RELEASE_BASENAME}"
-
   tar cvf "${TARBALL_BASENAME}".tar "${RELEASE_BASENAME}"
   bzip2 -f "${TARBALL_BASENAME}".tar
   cp "${RELEASE_BASENAME}"/version.yml "${TARBALL_BASENAME}-${TARGET}".yml
+  rm -rf "${RELEASE_BASENAME}"
 )
 
 # Make CHANNEL available to include in the software version information
