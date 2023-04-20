@@ -83,15 +83,6 @@ jobs:
 
       - name: Install core deps for mac if needed
         if: startsWith(matrix.os, 'mac')
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/Library/Caches/Homebrew/jq--*
-            ~/Library/Caches/Homebrew/downloads/*--jq-*
-          key: brew-${{ hashFiles('.github/brew-formulae') }}
-          restore-keys: brew-
-      - name: Install core deps for mac if needed
-        if: startsWith(matrix.os, 'mac')
         run: |
           env HOMEBREW_NO_AUTO_UPDATE=1 brew install jq
       - name: Install core deps
@@ -116,11 +107,22 @@ jobs:
      
       - uses: ./.github/actions/setup-solana/
 
-      - name: Install Anchor
+      # - name: Install Anchor
+      #   run: |
+      #     cargo install --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }} anchor-cli --locked
+      #     anchor --version
+      #     rustup toolchain list
+
+      - name: Install anchor
+        uses: baptiste0928/cargo-install@v2
+        with:
+          crate: anchor-cli
+          args: --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }}
+      - name: Fix Anchor Path
         run: |
-          cargo install --git https://github.com/coral-xyz/anchor --tag ${{ env.ANCHOR_VERSION }} anchor-cli --locked
+          mv ~/.cargo-install/anchor-cli/bin/* ~/.cargo/bin/
+          ls ~/.cargo/bin
           anchor --version
-          rustup toolchain list
 
       - run: |
           echo "~/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
