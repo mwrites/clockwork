@@ -63,6 +63,8 @@ echo "Release flag: ${maybeReleaseFlag:---not-set}"
 set -x
 command -v cargo-build-bpf
 cargo-build-bpf -V
+command -v cargo-build-sbf
+cargo-build-sbf -V
 command -v anchor
 anchor -V
 rustup toolchain list
