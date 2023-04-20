@@ -125,7 +125,7 @@ jobs:
       - run: |
           echo "~/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
           export PATH=~/.local/share/solana/install/active_release/bin:$PATH
-          cargo build-bpf
+          cargo-build-bpf -V
         shell: bash
 
       - uses: actions/download-artifact@v3
