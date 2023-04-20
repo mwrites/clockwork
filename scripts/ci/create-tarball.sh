@@ -41,6 +41,11 @@ echo --- Creating release tarball
   var=$(pwd)
   echo "The current working directory $var"
 
+(
+set -x
+cargo-build-bpf -V
+)
+
   source ./scripts/ci/rust-version.sh stable
   ./scripts/build-all.sh +"${rust_stable:?}" --target "$TARGET" "${RELEASE_BASENAME}-${TARGET}"
 

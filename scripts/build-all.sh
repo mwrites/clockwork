@@ -60,6 +60,8 @@ echo "Target triple: $targetTriple"
 echo "Install directory: $installDir"
 echo "Release flag: ${maybeReleaseFlag:---not-set}"
 
+cargo-build-bpf -V
+
 
 # Check the install directory is provided
 if [[ -z "$installDir" ]]; then
