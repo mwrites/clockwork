@@ -60,17 +60,17 @@ echo "Target triple: $targetTriple"
 echo "Install directory: $installDir"
 echo "Release flag: ${maybeReleaseFlag:---not-set}"
 
-set -x
-echo $PATH
+# set -x
+# echo $PATH
 # export PATH=~/.local/share/solana/install/active_release/bin:$PATH
 # ls ~/.local/share/solana/install/active_release/bin
-command -v cargo-build-bpf
-cargo-build-bpf -V
-command -v cargo-build-sbf
-cargo-build-sbf -V
-command -v anchor
-anchor -V
-rustup toolchain list
+# command -v cargo-build-bpf
+# cargo-build-bpf -V
+# command -v cargo-build-sbf
+# cargo-build-sbf -V
+# command -v anchor
+# anchor -V
+# rustup toolchain list
 
 # Check the install directory is provided
 if [[ -z "$installDir" ]]; then
@@ -100,7 +100,7 @@ done
 # Build programs
 (
   set -x
-  anchor build -- --verbose
+  anchor build
 )
 
 # Define lib extension

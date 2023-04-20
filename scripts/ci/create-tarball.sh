@@ -42,13 +42,11 @@ echo --- Creating release tarball
   echo "The current working directory $var"
 
   source ./scripts/ci/rust-version.sh stable
-  ./scripts/build-all.sh +"${rust_stable:?}" --target "$TARGET" "${RELEASE_BASENAME}-${TARGET}"
+  ./scripts/build-all.sh +"${rust_stable:?}" --target "$TARGET" "${RELEASE_BASENAME}"
 
-  mv "${RELEASE_BASENAME}-${TARGET}"/* "${RELEASE_BASENAME}/"
   tar cvf "${TARBALL_BASENAME}".tar "${RELEASE_BASENAME}"
   bzip2 -f "${TARBALL_BASENAME}".tar
-  cp "${RELEASE_BASENAME}"/version.yml "${TARBALL_BASENAME}-${TARGET}".yml
-  rm -rf "${RELEASE_BASENAME}"
+  cp -fv "${RELEASE_BASENAME}"/version.yml "${TARBALL_BASENAME}-${TARGET}".yml
 )
 
 # Make CHANNEL available to include in the software version information
