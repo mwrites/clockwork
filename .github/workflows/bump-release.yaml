@@ -80,12 +80,7 @@ jobs:
             target: x86_64-unknown-linux-gnu
     steps:
       - uses: actions/checkout@v3 
-      
       - uses: actions/download-artifact@v3
-      - run: |
-          sudo chown -R $(whoami) .
-          cat VERSION
-        shell: bash
 
       - name: Install core deps for mac if needed
         if: startsWith(matrix.os, 'mac')
@@ -99,6 +94,7 @@ jobs:
 
       - name: Env variables
         run: |
+          chmod +x ./scripts/ci/solana-version.sh
           echo "CI_TAG=v$(cat VERSION)" >> $GITHUB_ENV
           SOLANA_VERSION="$(./scripts/ci/solana-version.sh)"
           SOLANA_VERSION="v${SOLANA_VERSION#=}"
