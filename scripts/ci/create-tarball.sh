@@ -49,7 +49,7 @@ echo --- Creating release tarball
 
   tar cvf "${TARBALL_BASENAME}".tar "${RELEASE_BASENAME}"
   bzip2 -f "${TARBALL_BASENAME}".tar
-  cp "${RELEASE_BASENAME}"/version.yml "${TARBALL_BASENAME}".yml
+  cp "${RELEASE_BASENAME}"/version.yml "${TARBALL_BASENAME}-${TARGET}".yml
 )
 
   # Make CHANNEL available to include in the software version information
