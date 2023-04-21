@@ -42,7 +42,7 @@ echo --- Creating release tarball
   echo "The current working directory $var"
 
   source ./scripts/ci/rust-version.sh stable
-  ./scripts/build-all.sh +"${rust_stable:?}" --target "$TARGET" "${RELEASE_BASENAME}"
+  ./scripts/build-all.sh +"${rust_stable:?}" --release --target "$TARGET" "${RELEASE_BASENAME}"
 
   RELEASE_NAME="${TARBALL_BASENAME}-${TARGET}"
 
