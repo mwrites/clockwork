@@ -149,8 +149,6 @@ jobs:
 
       - name: Env variables
         run: |
-          echo $PWD
-          ls .
           chmod +x ./scripts/ci/solana-version.sh
           echo "CI_TAG=v$(cat VERSION)" >> $GITHUB_ENV
           SOLANA_VERSION="$(./scripts/ci/solana-version.sh)"
@@ -159,6 +157,9 @@ jobs:
           cmod +x ./scripts/ci/rust-version.sh
           source scripts/ci/rust-version.sh
           echo "PLUGIN_RUST_VERSION=$rust_stable" >> $GITHUB_ENV
+
+      - name: BLA
+        run: ls ..
           
       - name: Publish Github release
         uses: softprops/action-gh-release@v1
@@ -172,7 +173,7 @@ jobs:
             rust ${{ env.PLUGIN_RUST_VERSION }}
           # this gh action ignores the working directory, and defaults to the root of the repo
           files: |
-            release-build/clockwork-geyser-plugin-release-*
+            ../release-build/clockwork-geyser-plugin-release-*
 
   publish-crate:
     needs:
@@ -205,4 +206,4 @@ jobs:
       - name: Publish to crates.io
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
-        run: cargo publish-workspace --crate-prefix clockwork -- --locked --dry-run --allow-dirty
+        run: cargo publish-workspace --crate-prefix clockwork -- --dry-run --allow-dirty
