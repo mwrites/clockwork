@@ -142,13 +142,15 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./release-build
+        working-directory: ./bumped_source
     steps:
       - uses: actions/checkout@v3 
       - uses: actions/download-artifact@v3
 
       - name: Env variables
         run: |
+          echo $PWD
+          ls .
           chmod +x ./scripts/ci/solana-version.sh
           echo "CI_TAG=v$(cat VERSION)" >> $GITHUB_ENV
           SOLANA_VERSION="$(./scripts/ci/solana-version.sh)"
@@ -179,7 +181,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     defaults:
       run:
-        working-directory: ./release-build
+        working-directory: ./bumped_source
     steps:
       - uses: actions/checkout@v3 
       - uses: actions/download-artifact@v3
