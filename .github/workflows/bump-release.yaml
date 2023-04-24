@@ -205,4 +205,4 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
         run: |
           rustc -V
-          cargo +stable publish-workspace --crate-prefix mat-clockwork -- --no-verify
+          cargo +stable publish-workspace --crate-prefix mat-clockwork -- --no-verify --allow-dirty
