@@ -1,8 +1,5 @@
 use {
-    crate::config::{
-        self,
-        CliConfig,
-    },
+    super::*,
     anyhow::{
         Context,
         Result,
@@ -76,21 +73,23 @@ pub fn download_and_extract(
     force_init: bool,
 ) -> Result<()> {
     if !force_init && all_target_files_exist(runtime_dir, files_to_extract) {
-        println!("Files {:#?} already exist", files_to_extract);
+        print_note!("Using {:#?} from cache", files_to_extract.join(", "));
         return Ok(());
     }
     // create runtime dir if necessary
     fs::create_dir_all(runtime_dir)
         .context(format!("Unable to create dirs for {:#?}", runtime_dir))?;
     download_file(src_url, &dest_path)?;
-    extract_archive(&dest_path, runtime_dir, files_to_extract)
+    extract_archive(&dest_path, runtime_dir, files_to_extract)?;
+    println!();
+    Ok(())
 }
 fn download_file(url: &str, dest: &Path) -> Result<()> {
     // Check if the input is a URL or a local path
     match Url::parse(url) {
         Ok(url) => {
             // Download the file from the internet
-            println!("Downloading {}", url);
+            print_status!("Downloading", "{}", &url.to_string());
             let response =
                 get(url.clone()).context(format!("Failed to download file from {}", url))?;
             if response.status() != reqwest::StatusCode::OK {
@@ -99,7 +98,7 @@ fn download_file(url: &str, dest: &Path) -> Result<()> {
 
             let pb = ProgressBar::new(response.content_length().unwrap_or(0));
             pb.set_style(ProgressStyle::default_bar()
-                .template("{spinner:.green}  [{elapsed_precise}] [{bar:40.cyan/blue}] {bytes}/{total_bytes} ({eta})")
+                .template("{spinner:.green} 🚚 [{elapsed_precise}] [{bar:40.cyan/blue}] {bytes}/{total_bytes} ({eta})")
                 .progress_chars("#>-"));
 
             let mut source = pb.wrap_read(response);
@@ -125,11 +124,10 @@ fn extract_archive(
 ) -> Result<()> {
     let file =
         File::open(&archive_path).context(format!("Failed to open file {:#?}", archive_path))?;
+    let target_file_names: Vec<&OsStr> = files_to_extract.iter().map(OsStr::new).collect();
     let mut archive = Archive::new(BzDecoder::new(file));
 
-    let target_file_names: Vec<&OsStr> = files_to_extract.iter().map(OsStr::new).collect();
-
-    println!("📦 Extracting...");
+    print_status!("Extracting", "{:?}", archive_path);
     archive
         .entries()?
         .filter_map(|e| e.ok())
@@ -158,7 +156,7 @@ fn extract_archive(
         })
         .filter_map(|e| e.ok())
         .for_each(|x| {
-            println!("> {}", x.display());
+            print_status!(">", "{}", x.display());
         });
     Ok(())
 }

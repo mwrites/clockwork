@@ -40,6 +40,7 @@ spl-memo = "3.0.1"
 spl-token = "~3.5.0"
 tar = "0.4"
 thiserror = "1.0.30"
+termcolor = "1.2.0"
 
 [[bin]]
 name = "clockwork"

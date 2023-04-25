@@ -1,3 +1,7 @@
+use {
+    crate::print_status,
+    clap::crate_version,
+};
 #[allow(deprecated)]
 use {
     crate::{
@@ -5,6 +9,7 @@ use {
         deps,
         errors::CliError,
         parser::ProgramInfo,
+        print::print_style,
     },
     anyhow::{
         Context,
@@ -251,7 +256,7 @@ fn start_test_validator(
     network_url: Option<String>,
     clone_addresses: Vec<Pubkey>,
 ) -> Result<Child> {
-    println!("Starting test validator");
+    print_status!("Running", "Clockwork Validator {}\n", crate_version!());
 
     let path = config.active_runtime("solana-test-validator").to_owned();
     let cmd = &mut Command::new(path);
@@ -266,7 +271,7 @@ fn start_test_validator(
 
     let mut process = cmd
         .spawn()
-        .context(format!("olana-test-validator command: {:#?}", cmd))?;
+        .context(format!("solana-test-validator command: {:#?}", cmd))?;
 
     // Wait for the validator to become healthy
     let ms_wait = 10_000;
