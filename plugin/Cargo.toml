@@ -13,13 +13,6 @@ readme = "./README.md"
 keywords = ["solana"]
 build = "build.rs"
 
-include = [
-    "build.rs",
-    "src/lib.rs",
-    "src/config.rs",
-    "Cargo.toml",
-]
-
 [lib]
 crate-type = ["cdylib", "rlib"]
 name = "clockwork_plugin"
@@ -62,7 +55,3 @@ rustc_version = "0.4.0"
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
-
-[features]
-default = []
-config = []

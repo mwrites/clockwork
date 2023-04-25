@@ -111,7 +111,10 @@ fn download_file(url: &str, dest: &Path) -> Result<()> {
         Err(_) => {
             // Copy the local file to the destination
             let source_path = Path::new(url);
-            copy(source_path, dest)?;
+            copy(source_path, dest).context(format!(
+                "failed to copy file from {:#?} to {:#?}",
+                source_path, dest
+            ))?;
         }
     }
     Ok(())
