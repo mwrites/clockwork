@@ -114,7 +114,6 @@ esac
 (
   set -x
   cargo +"$maybeRustVersion" build --locked $maybeReleaseFlag "${binArgs[@]}" --lib --target "$targetTriple"
-
   # Copy binaries
   case $targetTriple in
     *darwin*)
