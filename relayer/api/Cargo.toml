@@ -1,6 +1,6 @@
 [package]
 name = "mat-clockwork-relayer-api"
-version = "2.0.40"
+version = "2.0.41"
 edition = "2021"
 description = "Clockwork relayer for webhook requests"
 license = "AGPL-3.0-or-later"
