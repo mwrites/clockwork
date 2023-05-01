@@ -2420,12 +2420,11 @@ dependencies = [
  "indicatif",
  "mat-clockwork-client",
  "mat-clockwork-cron",
+ "mat-clockwork-plugin-utils",
  "mat-clockwork-relayer-api",
  "mat-clockwork-utils",
  "mat-clockwork-webhook-program",
- "mat_clockwork_plugin",
  "reqwest",
- "rustc_version",
  "serde",
  "serde_json",
  "serde_yaml 0.9.21",
@@ -2476,6 +2475,15 @@ dependencies = [
  "anchor-lang",
  "anchor-spl",
  "mat-clockwork-utils",
+]
+
+[[package]]
+name = "mat-clockwork-plugin-utils"
+version = "2.0.40"
+dependencies = [
+ "serde",
+ "serde_json",
+ "solana-geyser-plugin-interface",
 ]
 
 [[package]]
@@ -2582,6 +2590,7 @@ dependencies = [
  "log 0.4.17",
  "mat-clockwork-client",
  "mat-clockwork-cron",
+ "mat-clockwork-plugin-utils",
  "mat-clockwork-relayer-api",
  "mat-clockwork-thread-program",
  "mat-clockwork-thread-program-v1",

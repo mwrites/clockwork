@@ -236,7 +236,7 @@ fn create_threads(client: &Client, mint_pubkey: Pubkey) -> Result<()> {
 }
 
 fn create_geyser_plugin_config(config: &CliConfig) -> Result<()> {
-    let geyser_config = clockwork_plugin::geyser_config::PluginConfig {
+    let geyser_config = clockwork_plugin_utils::PluginConfig {
         keypath: Some(config.signatory().to_owned()),
         libpath: Some(config.geyser_lib().to_owned()),
         ..Default::default()
