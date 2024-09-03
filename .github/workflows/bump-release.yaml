@@ -130,7 +130,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: bumped_source
 
@@ -170,7 +170,7 @@ jobs:
           message: Bump from ${{ env.OLD_VERSION }} to ${{ env.CI_TAG }}
           tag: ${{ env.CI_TAG }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: release_build
 
@@ -196,7 +196,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: bumped_source
 
